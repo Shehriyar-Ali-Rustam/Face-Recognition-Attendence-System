@@ -27,14 +27,14 @@ TRAINED_MODELS_DIR = BASE_DIR / "trained_models"
 # Page config
 st.set_page_config(
     page_title="AttendEase - Smart Attendance",
-    page_icon="📋",
+    page_icon="A",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Theme functions
+# Professional Black & White Theme CSS
 def get_theme_css(theme: str) -> str:
-    """Generate CSS based on selected theme"""
+    """Generate professional black and white CSS based on selected theme"""
 
     if theme == "dark":
         return """
@@ -42,28 +42,27 @@ def get_theme_css(theme: str) -> str:
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
             :root {
-                --bg-primary: #0f172a;
-                --bg-secondary: #1e293b;
-                --bg-card: #1e293b;
-                --text-primary: #f1f5f9;
-                --text-secondary: #94a3b8;
-                --text-muted: #64748b;
-                --accent-primary: #3b82f6;
-                --accent-secondary: #8b5cf6;
-                --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-                --border-color: #334155;
-                --success: #22c55e;
-                --warning: #f59e0b;
-                --error: #ef4444;
-                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+                --bg-primary: #0a0a0a;
+                --bg-secondary: #141414;
+                --bg-card: #1a1a1a;
+                --bg-sidebar: #0f0f0f;
+                --text-primary: #ffffff;
+                --text-secondary: #a0a0a0;
+                --text-muted: #666666;
+                --accent: #ffffff;
+                --accent-hover: #e0e0e0;
+                --border-color: #2a2a2a;
+                --hover-bg: #1f1f1f;
+                --success: #4ade80;
+                --warning: #fbbf24;
+                --error: #f87171;
+                --shadow: 0 1px 3px rgba(0,0,0,0.4);
+                --shadow-lg: 0 8px 25px rgba(0,0,0,0.5);
             }
 
             * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
 
-            .stApp {
-                background: var(--bg-primary);
-            }
+            .stApp { background: var(--bg-primary); }
 
             /* All text */
             .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
@@ -76,9 +75,11 @@ def get_theme_css(theme: str) -> str:
             .stTextInput label, .stSelectbox label, .stSlider label,
             .stCheckbox label, .stTextArea label, .stNumberInput label,
             .stFileUploader label {
-                color: var(--text-primary) !important;
+                color: var(--text-secondary) !important;
                 font-weight: 500;
-                font-size: 14px;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
             }
 
             /* Input fields */
@@ -87,23 +88,28 @@ def get_theme_css(theme: str) -> str:
             .stNumberInput > div > div > input {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
                 color: var(--text-primary) !important;
-                padding: 10px 14px !important;
+                padding: 12px 16px !important;
+                font-size: 14px !important;
+                transition: border-color 0.2s ease !important;
             }
 
             .stTextInput > div > div > input:focus,
             .stTextArea textarea:focus {
-                border-color: var(--accent-primary) !important;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+                border-color: var(--accent) !important;
+                box-shadow: none !important;
+            }
+
+            .stTextInput > div > div > input::placeholder {
+                color: var(--text-muted) !important;
             }
 
             /* Select box */
-            .stSelectbox > div > div,
-            [data-baseweb="select"] {
+            .stSelectbox > div > div, [data-baseweb="select"] {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
             }
 
             .stSelectbox [data-baseweb="select"] *,
@@ -116,7 +122,7 @@ def get_theme_css(theme: str) -> str:
             [data-baseweb="listbox"], [role="listbox"] {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
             }
 
             [data-baseweb="popover"] li, [data-baseweb="menu"] li,
@@ -127,7 +133,41 @@ def get_theme_css(theme: str) -> str:
 
             [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
             [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-                background: var(--bg-primary) !important;
+                background: var(--hover-bg) !important;
+            }
+
+            /* Sidebar - Professional Navigation */
+            [data-testid="stSidebar"] {
+                background: var(--bg-sidebar) !important;
+                border-right: 1px solid var(--border-color) !important;
+            }
+
+            [data-testid="stSidebar"] > div:first-child {
+                padding-top: 1.5rem;
+            }
+
+            [data-testid="stSidebar"] * {
+                color: var(--text-primary) !important;
+            }
+
+            [data-testid="stSidebar"] .stButton > button {
+                background: transparent !important;
+                border: none !important;
+                border-radius: 0 !important;
+                color: var(--text-secondary) !important;
+                padding: 14px 20px !important;
+                text-align: left !important;
+                font-weight: 400 !important;
+                font-size: 14px !important;
+                border-left: 3px solid transparent !important;
+                transition: all 0.2s ease !important;
+                margin: 2px 0 !important;
+            }
+
+            [data-testid="stSidebar"] .stButton > button:hover {
+                background: var(--hover-bg) !important;
+                color: var(--text-primary) !important;
+                border-left-color: var(--accent) !important;
             }
 
             /* Slider */
@@ -140,68 +180,60 @@ def get_theme_css(theme: str) -> str:
                 color: var(--text-primary) !important;
             }
 
-            /* Sidebar */
-            [data-testid="stSidebar"] {
-                background: var(--bg-secondary) !important;
-                border-right: 1px solid var(--border-color);
-            }
-
-            [data-testid="stSidebar"] * {
-                color: var(--text-primary) !important;
-            }
-
             /* Tabs */
             .stTabs [data-baseweb="tab-list"] {
                 background: var(--bg-secondary);
-                border-radius: 10px;
+                border-radius: 8px;
                 padding: 4px;
                 gap: 4px;
+                border: 1px solid var(--border-color);
             }
 
             .stTabs [data-baseweb="tab"] {
                 background: transparent;
                 color: var(--text-secondary) !important;
-                border-radius: 8px;
+                border-radius: 6px;
                 padding: 10px 20px;
             }
 
             .stTabs [aria-selected="true"] {
-                background: var(--accent-primary) !important;
-                color: white !important;
+                background: var(--accent) !important;
+                color: #000000 !important;
             }
 
-            /* Buttons */
+            /* Main Buttons */
             .stButton > button {
-                background: var(--accent-gradient) !important;
-                color: white !important;
+                background: var(--accent) !important;
+                color: #000000 !important;
                 border: none !important;
-                border-radius: 8px !important;
-                padding: 10px 24px !important;
+                border-radius: 6px !important;
+                padding: 12px 24px !important;
                 font-weight: 600 !important;
                 font-size: 14px !important;
                 transition: all 0.2s ease !important;
+                letter-spacing: 0.3px !important;
             }
 
             .stButton > button:hover {
+                background: var(--accent-hover) !important;
                 transform: translateY(-1px);
                 box-shadow: var(--shadow-lg);
-                opacity: 0.9;
             }
 
             /* Cards */
             .stat-card, .role-card, .profile-card, .attendance-row {
                 background: var(--bg-card) !important;
                 border: 1px solid var(--border-color);
-                border-radius: 12px;
+                border-radius: 10px;
                 box-shadow: var(--shadow);
             }
 
             .stat-card { padding: 24px; text-align: center; }
-            .stat-value { font-size: 32px; font-weight: 700; color: var(--text-primary) !important; }
-            .stat-label { font-size: 12px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+            .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
+            .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
 
             .role-card {
-                padding: 32px 24px;
+                padding: 40px 28px;
                 text-align: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -210,45 +242,46 @@ def get_theme_css(theme: str) -> str:
             .role-card:hover {
                 transform: translateY(-4px);
                 box-shadow: var(--shadow-lg);
-                border-color: var(--accent-primary);
+                border-color: var(--accent);
             }
 
             .role-icon {
-                width: 80px;
-                height: 80px;
+                width: 72px;
+                height: 72px;
                 border-radius: 50%;
-                background: var(--accent-gradient);
-                margin: 0 auto 16px;
+                background: var(--accent);
+                margin: 0 auto 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 36px;
-                color: white;
+                font-size: 28px;
+                font-weight: 700;
+                color: #000000;
             }
 
-            .role-title { font-size: 20px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 8px; }
-            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.5; }
+            .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
+            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
 
             /* Header bar */
             .header-bar {
-                background: var(--accent-gradient);
+                background: var(--accent);
                 padding: 20px 24px;
-                border-radius: 12px;
+                border-radius: 10px;
                 margin-bottom: 24px;
             }
 
-            .header-bar h2, .header-bar p { color: white !important; }
+            .header-bar h2, .header-bar p { color: #000000 !important; }
 
             /* Section title */
             .section-title {
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: 600;
                 color: var(--text-primary) !important;
                 margin: 24px 0 16px 0;
                 padding: 12px 16px;
                 background: var(--bg-secondary);
-                border-radius: 8px;
-                border-left: 3px solid var(--accent-primary);
+                border-radius: 6px;
+                border-left: 3px solid var(--accent);
             }
 
             /* Attendance row */
@@ -262,25 +295,27 @@ def get_theme_css(theme: str) -> str:
 
             /* Status badges */
             .status-present {
-                background: rgba(34, 197, 94, 0.15);
-                color: #22c55e !important;
-                padding: 4px 12px;
-                border-radius: 16px;
+                background: rgba(74, 222, 128, 0.15);
+                color: #4ade80 !important;
+                padding: 6px 14px;
+                border-radius: 20px;
                 font-size: 12px;
                 font-weight: 600;
+                letter-spacing: 0.3px;
             }
 
             .status-absent {
-                background: rgba(239, 68, 68, 0.15);
-                color: #ef4444 !important;
-                padding: 4px 12px;
-                border-radius: 16px;
+                background: rgba(248, 113, 113, 0.15);
+                color: #f87171 !important;
+                padding: 6px 14px;
+                border-radius: 20px;
                 font-size: 12px;
                 font-weight: 600;
+                letter-spacing: 0.3px;
             }
 
             /* Profile card */
-            .profile-card { padding: 32px; text-align: center; }
+            .profile-card { padding: 36px; text-align: center; }
             .profile-card h3 { color: var(--text-primary) !important; }
             .profile-card p { color: var(--text-secondary) !important; }
 
@@ -288,18 +323,19 @@ def get_theme_css(theme: str) -> str:
                 width: 100px;
                 height: 100px;
                 border-radius: 50%;
-                background: var(--accent-gradient);
-                margin: 0 auto 16px;
+                background: var(--accent);
+                margin: 0 auto 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 40px;
-                color: white !important;
+                font-size: 36px;
+                font-weight: 700;
+                color: #000000 !important;
             }
 
             /* Progress bar */
             .stProgress > div > div {
-                background: var(--accent-gradient) !important;
+                background: var(--accent) !important;
             }
 
             /* File uploader */
@@ -323,14 +359,11 @@ def get_theme_css(theme: str) -> str:
                 z-index: 999;
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-color);
-                border-radius: 8px;
+                border-radius: 6px;
                 padding: 8px 16px;
                 cursor: pointer;
                 font-size: 13px;
                 color: var(--text-primary);
-                display: flex;
-                align-items: center;
-                gap: 6px;
             }
         </style>
         """
@@ -340,21 +373,22 @@ def get_theme_css(theme: str) -> str:
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
             :root {
-                --bg-primary: #f8fafc;
+                --bg-primary: #fafafa;
                 --bg-secondary: #ffffff;
                 --bg-card: #ffffff;
-                --text-primary: #0f172a;
-                --text-secondary: #475569;
-                --text-muted: #94a3b8;
-                --accent-primary: #3b82f6;
-                --accent-secondary: #8b5cf6;
-                --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-                --border-color: #e2e8f0;
+                --bg-sidebar: #ffffff;
+                --text-primary: #0a0a0a;
+                --text-secondary: #525252;
+                --text-muted: #a3a3a3;
+                --accent: #0a0a0a;
+                --accent-hover: #262626;
+                --border-color: #e5e5e5;
+                --hover-bg: #f5f5f5;
                 --success: #22c55e;
                 --warning: #f59e0b;
                 --error: #ef4444;
-                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+                --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
             }
 
             * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -374,9 +408,11 @@ def get_theme_css(theme: str) -> str:
             .stTextInput label, .stSelectbox label, .stSlider label,
             .stCheckbox label, .stTextArea label, .stNumberInput label,
             .stFileUploader label {
-                color: var(--text-primary) !important;
+                color: var(--text-secondary) !important;
                 font-weight: 500;
-                font-size: 14px;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
             }
 
             /* Input fields */
@@ -385,15 +421,17 @@ def get_theme_css(theme: str) -> str:
             .stNumberInput > div > div > input {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
                 color: var(--text-primary) !important;
-                padding: 10px 14px !important;
+                padding: 12px 16px !important;
+                font-size: 14px !important;
+                transition: border-color 0.2s ease !important;
             }
 
             .stTextInput > div > div > input:focus,
             .stTextArea textarea:focus {
-                border-color: var(--accent-primary) !important;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+                border-color: var(--accent) !important;
+                box-shadow: none !important;
             }
 
             /* Select box */
@@ -401,7 +439,7 @@ def get_theme_css(theme: str) -> str:
             [data-baseweb="select"] {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
             }
 
             .stSelectbox [data-baseweb="select"] *,
@@ -414,7 +452,7 @@ def get_theme_css(theme: str) -> str:
             [data-baseweb="listbox"], [role="listbox"] {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-color) !important;
-                border-radius: 8px !important;
+                border-radius: 6px !important;
                 box-shadow: var(--shadow-lg) !important;
             }
 
@@ -426,7 +464,7 @@ def get_theme_css(theme: str) -> str:
 
             [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
             [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-                background: var(--bg-primary) !important;
+                background: var(--hover-bg) !important;
             }
 
             /* Slider */
@@ -439,68 +477,94 @@ def get_theme_css(theme: str) -> str:
                 color: var(--text-primary) !important;
             }
 
-            /* Sidebar */
+            /* Sidebar - Professional Navigation */
             [data-testid="stSidebar"] {
-                background: var(--bg-secondary) !important;
+                background: var(--bg-sidebar) !important;
                 border-right: 1px solid var(--border-color);
+            }
+
+            [data-testid="stSidebar"] > div:first-child {
+                padding-top: 1.5rem;
             }
 
             [data-testid="stSidebar"] * {
                 color: var(--text-primary) !important;
             }
 
+            [data-testid="stSidebar"] .stButton > button {
+                background: transparent !important;
+                border: none !important;
+                border-radius: 0 !important;
+                color: var(--text-secondary) !important;
+                padding: 14px 20px !important;
+                text-align: left !important;
+                font-weight: 400 !important;
+                font-size: 14px !important;
+                border-left: 3px solid transparent !important;
+                transition: all 0.2s ease !important;
+                margin: 2px 0 !important;
+            }
+
+            [data-testid="stSidebar"] .stButton > button:hover {
+                background: var(--hover-bg) !important;
+                color: var(--text-primary) !important;
+                border-left-color: var(--accent) !important;
+            }
+
             /* Tabs */
             .stTabs [data-baseweb="tab-list"] {
                 background: var(--bg-primary);
-                border-radius: 10px;
+                border-radius: 8px;
                 padding: 4px;
                 gap: 4px;
+                border: 1px solid var(--border-color);
             }
 
             .stTabs [data-baseweb="tab"] {
                 background: transparent;
                 color: var(--text-secondary) !important;
-                border-radius: 8px;
+                border-radius: 6px;
                 padding: 10px 20px;
             }
 
             .stTabs [aria-selected="true"] {
-                background: var(--accent-primary) !important;
-                color: white !important;
+                background: var(--accent) !important;
+                color: #ffffff !important;
             }
 
-            /* Buttons */
+            /* Main Buttons */
             .stButton > button {
-                background: var(--accent-gradient) !important;
-                color: white !important;
+                background: var(--accent) !important;
+                color: #ffffff !important;
                 border: none !important;
-                border-radius: 8px !important;
-                padding: 10px 24px !important;
+                border-radius: 6px !important;
+                padding: 12px 24px !important;
                 font-weight: 600 !important;
                 font-size: 14px !important;
                 transition: all 0.2s ease !important;
+                letter-spacing: 0.3px !important;
             }
 
             .stButton > button:hover {
+                background: var(--accent-hover) !important;
                 transform: translateY(-1px);
                 box-shadow: var(--shadow-lg);
-                opacity: 0.9;
             }
 
             /* Cards */
             .stat-card, .role-card, .profile-card, .attendance-row {
                 background: var(--bg-card) !important;
                 border: 1px solid var(--border-color);
-                border-radius: 12px;
+                border-radius: 10px;
                 box-shadow: var(--shadow);
             }
 
             .stat-card { padding: 24px; text-align: center; }
-            .stat-value { font-size: 32px; font-weight: 700; color: var(--text-primary) !important; }
-            .stat-label { font-size: 12px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+            .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
+            .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
 
             .role-card {
-                padding: 32px 24px;
+                padding: 40px 28px;
                 text-align: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -509,45 +573,46 @@ def get_theme_css(theme: str) -> str:
             .role-card:hover {
                 transform: translateY(-4px);
                 box-shadow: var(--shadow-lg);
-                border-color: var(--accent-primary);
+                border-color: var(--accent);
             }
 
             .role-icon {
-                width: 80px;
-                height: 80px;
+                width: 72px;
+                height: 72px;
                 border-radius: 50%;
-                background: var(--accent-gradient);
-                margin: 0 auto 16px;
+                background: var(--accent);
+                margin: 0 auto 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 36px;
-                color: white;
+                font-size: 28px;
+                font-weight: 700;
+                color: #ffffff;
             }
 
-            .role-title { font-size: 20px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 8px; }
-            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.5; }
+            .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
+            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
 
             /* Header bar */
             .header-bar {
-                background: var(--accent-gradient);
+                background: var(--accent);
                 padding: 20px 24px;
-                border-radius: 12px;
+                border-radius: 10px;
                 margin-bottom: 24px;
             }
 
-            .header-bar h2, .header-bar p { color: white !important; }
+            .header-bar h2, .header-bar p { color: #ffffff !important; }
 
             /* Section title */
             .section-title {
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: 600;
                 color: var(--text-primary) !important;
                 margin: 24px 0 16px 0;
                 padding: 12px 16px;
                 background: var(--bg-secondary);
-                border-radius: 8px;
-                border-left: 3px solid var(--accent-primary);
+                border-radius: 6px;
+                border-left: 3px solid var(--accent);
             }
 
             /* Attendance row */
@@ -563,23 +628,25 @@ def get_theme_css(theme: str) -> str:
             .status-present {
                 background: rgba(34, 197, 94, 0.1);
                 color: #16a34a !important;
-                padding: 4px 12px;
-                border-radius: 16px;
+                padding: 6px 14px;
+                border-radius: 20px;
                 font-size: 12px;
                 font-weight: 600;
+                letter-spacing: 0.3px;
             }
 
             .status-absent {
                 background: rgba(239, 68, 68, 0.1);
                 color: #dc2626 !important;
-                padding: 4px 12px;
-                border-radius: 16px;
+                padding: 6px 14px;
+                border-radius: 20px;
                 font-size: 12px;
                 font-weight: 600;
+                letter-spacing: 0.3px;
             }
 
             /* Profile card */
-            .profile-card { padding: 32px; text-align: center; }
+            .profile-card { padding: 36px; text-align: center; }
             .profile-card h3 { color: var(--text-primary) !important; }
             .profile-card p { color: var(--text-secondary) !important; }
 
@@ -587,18 +654,19 @@ def get_theme_css(theme: str) -> str:
                 width: 100px;
                 height: 100px;
                 border-radius: 50%;
-                background: var(--accent-gradient);
-                margin: 0 auto 16px;
+                background: var(--accent);
+                margin: 0 auto 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 40px;
-                color: white !important;
+                font-size: 36px;
+                font-weight: 700;
+                color: #ffffff !important;
             }
 
             /* Progress bar */
             .stProgress > div > div {
-                background: var(--accent-gradient) !important;
+                background: var(--accent) !important;
             }
 
             /* File uploader */
@@ -622,14 +690,11 @@ def get_theme_css(theme: str) -> str:
                 z-index: 999;
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-color);
-                border-radius: 8px;
+                border-radius: 6px;
                 padding: 8px 16px;
                 cursor: pointer;
                 font-size: 13px;
                 color: var(--text-primary);
-                display: flex;
-                align-items: center;
-                gap: 6px;
             }
         </style>
         """
@@ -667,9 +732,8 @@ def show_theme_toggle():
     """Display theme toggle button"""
     col1, col2, col3 = st.columns([6, 1, 1])
     with col3:
-        theme_icon = "🌙" if st.session_state.theme == 'light' else "☀️"
-        theme_text = "Dark" if st.session_state.theme == 'light' else "Light"
-        if st.button(f"{theme_icon} {theme_text}", key="theme_toggle", help="Toggle theme"):
+        theme_text = "Dark Mode" if st.session_state.theme == 'light' else "Light Mode"
+        if st.button(theme_text, key="theme_toggle", help="Toggle theme"):
             toggle_theme()
             st.rerun()
 
@@ -680,15 +744,13 @@ def show_role_selection():
     show_theme_toggle()
 
     st.markdown("""
-    <div style="text-align:center;padding:40px 0;">
-        <h1 style="font-size:42px;margin-bottom:8px;font-weight:700;">
-            <span style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AttendEase</span>
-        </h1>
-        <p style="font-size:16px;opacity:0.7;">Smart Face Recognition Attendance System</p>
+    <div style="text-align:center;padding:50px 0 30px;">
+        <h1 style="font-size:48px;margin-bottom:12px;font-weight:700;letter-spacing:-1px;">AttendEase</h1>
+        <p style="font-size:14px;opacity:0.6;letter-spacing:2px;text-transform:uppercase;">Smart Face Recognition Attendance</p>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<h3 style='text-align:center;margin-bottom:30px;font-weight:500;'>Select Your Portal</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;margin-bottom:40px;font-weight:400;font-size:15px;opacity:0.7;'>Select your portal to continue</p>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
 
@@ -698,7 +760,7 @@ def show_role_selection():
         with col_a:
             st.markdown("""
             <div class="role-card">
-                <div class="role-icon">👨‍🎓</div>
+                <div class="role-icon">S</div>
                 <div class="role-title">Student</div>
                 <div class="role-desc">Mark attendance, view records, and manage your profile</div>
             </div>
@@ -711,7 +773,7 @@ def show_role_selection():
         with col_b:
             st.markdown("""
             <div class="role-card">
-                <div class="role-icon">👨‍💼</div>
+                <div class="role-icon">A</div>
                 <div class="role-title">Admin</div>
                 <div class="role-desc">Manage students, train model, and view reports</div>
             </div>
@@ -723,13 +785,13 @@ def show_role_selection():
 
     # Quick Attendance Section
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;font-size:14px;margin-bottom:15px;opacity:0.6;'>— OR —</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;font-size:12px;margin-bottom:20px;opacity:0.4;letter-spacing:3px;text-transform:uppercase;'>or</p>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
         <div class="role-card">
-            <div class="role-icon" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">📸</div>
+            <div class="role-icon">Q</div>
             <div class="role-title">Quick Attendance</div>
             <div class="role-desc">Scan your face to mark attendance instantly without logging in</div>
         </div>
@@ -747,10 +809,10 @@ def show_student_login():
 
     with col2:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0;">
-            <div style="font-size:48px;margin-bottom:16px;">👨‍🎓</div>
+        <div style="text-align:center;padding:40px 0 30px;">
+            <div class="role-icon" style="margin:0 auto 20px;">S</div>
             <h1 style="font-size:28px;margin-bottom:8px;font-weight:600;">Student Portal</h1>
-            <p style="font-size:14px;opacity:0.7;">Login to access your dashboard</p>
+            <p style="font-size:14px;opacity:0.6;">Login to access your dashboard</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -785,7 +847,7 @@ def show_student_login():
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button("← Back to Home", use_container_width=True, key="student_back_btn"):
+        if st.button("Back to Home", use_container_width=True, key="student_back_btn"):
             st.session_state.page = 'role_select'
             st.rerun()
 
@@ -870,10 +932,10 @@ def show_admin_login():
 
     with col2:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0;">
-            <div style="font-size:48px;margin-bottom:16px;">👨‍💼</div>
+        <div style="text-align:center;padding:40px 0 30px;">
+            <div class="role-icon" style="margin:0 auto 20px;">A</div>
             <h1 style="font-size:28px;margin-bottom:8px;font-weight:600;">Admin Portal</h1>
-            <p style="font-size:14px;opacity:0.7;">Login to manage the system</p>
+            <p style="font-size:14px;opacity:0.6;">Login to manage the system</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -909,7 +971,7 @@ def show_admin_login():
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button("← Back to Home", use_container_width=True, key="admin_back_btn"):
+        if st.button("Back to Home", use_container_width=True, key="admin_back_btn"):
             st.session_state.page = 'role_select'
             st.rerun()
 
