@@ -1,7 +1,7 @@
 """
 Face Recognition Attendance System
 Main Application with Separate Student/Admin Portals
-Professional UI with Light/Dark Mode Support
+Professional White Theme UI
 """
 
 import streamlit as st
@@ -32,679 +32,325 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Professional Black & White Theme CSS
-def get_theme_css(theme: str) -> str:
-    """Generate professional black and white CSS based on selected theme"""
-
-    if theme == "dark":
-        return """
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-            :root {
-                --bg-primary: #0a0a0a;
-                --bg-secondary: #141414;
-                --bg-card: #1a1a1a;
-                --bg-sidebar: #0f0f0f;
-                --text-primary: #ffffff;
-                --text-secondary: #a0a0a0;
-                --text-muted: #666666;
-                --accent: #ffffff;
-                --accent-hover: #e0e0e0;
-                --border-color: #2a2a2a;
-                --hover-bg: #1f1f1f;
-                --success: #4ade80;
-                --warning: #fbbf24;
-                --error: #f87171;
-                --shadow: 0 1px 3px rgba(0,0,0,0.4);
-                --shadow-lg: 0 8px 25px rgba(0,0,0,0.5);
-            }
-
-            * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-
-            .stApp { background: var(--bg-primary); }
-
-            /* All text */
-            .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
-            .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown strong,
-            [data-testid="column"] p, .element-container .stMarkdown p {
-                color: var(--text-primary) !important;
-            }
-
-            /* Form labels */
-            .stTextInput label, .stSelectbox label, .stSlider label,
-            .stCheckbox label, .stTextArea label, .stNumberInput label,
-            .stFileUploader label {
-                color: var(--text-secondary) !important;
-                font-weight: 500;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 0.8px;
-            }
-
-            /* Input fields */
-            .stTextInput > div > div > input,
-            .stTextArea textarea,
-            .stNumberInput > div > div > input {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-                color: var(--text-primary) !important;
-                padding: 12px 16px !important;
-                font-size: 14px !important;
-                transition: border-color 0.2s ease !important;
-            }
-
-            .stTextInput > div > div > input:focus,
-            .stTextArea textarea:focus {
-                border-color: var(--accent) !important;
-                box-shadow: none !important;
-            }
-
-            .stTextInput > div > div > input::placeholder {
-                color: var(--text-muted) !important;
-            }
-
-            /* Select box */
-            .stSelectbox > div > div, [data-baseweb="select"] {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-            }
-
-            .stSelectbox [data-baseweb="select"] *,
-            .stSelectbox > div > div > div {
-                color: var(--text-primary) !important;
-            }
-
-            /* Dropdown menus */
-            [data-baseweb="popover"], [data-baseweb="menu"],
-            [data-baseweb="listbox"], [role="listbox"] {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-            }
-
-            [data-baseweb="popover"] li, [data-baseweb="menu"] li,
-            [data-baseweb="listbox"] li, [role="option"] {
-                background: var(--bg-secondary) !important;
-                color: var(--text-primary) !important;
-            }
-
-            [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
-            [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-                background: var(--hover-bg) !important;
-            }
-
-            /* Sidebar - Professional Navigation */
-            [data-testid="stSidebar"] {
-                background: var(--bg-sidebar) !important;
-                border-right: 1px solid var(--border-color) !important;
-            }
-
-            [data-testid="stSidebar"] > div:first-child {
-                padding-top: 1.5rem;
-            }
-
-            [data-testid="stSidebar"] * {
-                color: var(--text-primary) !important;
-            }
-
-            [data-testid="stSidebar"] .stButton > button {
-                background: transparent !important;
-                border: none !important;
-                border-radius: 0 !important;
-                color: var(--text-secondary) !important;
-                padding: 14px 20px !important;
-                text-align: left !important;
-                font-weight: 400 !important;
-                font-size: 14px !important;
-                border-left: 3px solid transparent !important;
-                transition: all 0.2s ease !important;
-                margin: 2px 0 !important;
-            }
-
-            [data-testid="stSidebar"] .stButton > button:hover {
-                background: var(--hover-bg) !important;
-                color: var(--text-primary) !important;
-                border-left-color: var(--accent) !important;
-            }
-
-            /* Slider */
-            .stSlider label, .stSlider p, [data-testid="stSlider"] * {
-                color: var(--text-primary) !important;
-            }
-
-            /* Checkbox */
-            .stCheckbox > label > span {
-                color: var(--text-primary) !important;
-            }
-
-            /* Tabs */
-            .stTabs [data-baseweb="tab-list"] {
-                background: var(--bg-secondary);
-                border-radius: 8px;
-                padding: 4px;
-                gap: 4px;
-                border: 1px solid var(--border-color);
-            }
-
-            .stTabs [data-baseweb="tab"] {
-                background: transparent;
-                color: var(--text-secondary) !important;
-                border-radius: 6px;
-                padding: 10px 20px;
-            }
-
-            .stTabs [aria-selected="true"] {
-                background: var(--accent) !important;
-                color: #000000 !important;
-            }
-
-            /* Main Buttons */
-            .stButton > button {
-                background: var(--accent) !important;
-                color: #000000 !important;
-                border: none !important;
-                border-radius: 6px !important;
-                padding: 12px 24px !important;
-                font-weight: 600 !important;
-                font-size: 14px !important;
-                transition: all 0.2s ease !important;
-                letter-spacing: 0.3px !important;
-            }
-
-            .stButton > button:hover {
-                background: var(--accent-hover) !important;
-                transform: translateY(-1px);
-                box-shadow: var(--shadow-lg);
-            }
-
-            /* Cards */
-            .stat-card, .role-card, .profile-card, .attendance-row {
-                background: var(--bg-card) !important;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                box-shadow: var(--shadow);
-            }
-
-            .stat-card { padding: 24px; text-align: center; }
-            .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
-            .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
-
-            .role-card {
-                padding: 40px 28px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .role-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-lg);
-                border-color: var(--accent);
-            }
-
-            .role-icon {
-                width: 72px;
-                height: 72px;
-                border-radius: 50%;
-                background: var(--accent);
-                margin: 0 auto 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 28px;
-                font-weight: 700;
-                color: #000000;
-            }
-
-            .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
-            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
-
-            /* Header bar */
-            .header-bar {
-                background: var(--accent);
-                padding: 20px 24px;
-                border-radius: 10px;
-                margin-bottom: 24px;
-            }
-
-            .header-bar h2, .header-bar p { color: #000000 !important; }
-
-            /* Section title */
-            .section-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: var(--text-primary) !important;
-                margin: 24px 0 16px 0;
-                padding: 12px 16px;
-                background: var(--bg-secondary);
-                border-radius: 6px;
-                border-left: 3px solid var(--accent);
-            }
-
-            /* Attendance row */
-            .attendance-row {
-                padding: 16px 20px;
-                margin: 8px 0;
-            }
-
-            .attendance-row strong { color: var(--text-primary) !important; }
-            .attendance-row span { color: var(--text-secondary) !important; }
-
-            /* Status badges */
-            .status-present {
-                background: rgba(74, 222, 128, 0.15);
-                color: #4ade80 !important;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-            }
-
-            .status-absent {
-                background: rgba(248, 113, 113, 0.15);
-                color: #f87171 !important;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-            }
-
-            /* Profile card */
-            .profile-card { padding: 36px; text-align: center; }
-            .profile-card h3 { color: var(--text-primary) !important; }
-            .profile-card p { color: var(--text-secondary) !important; }
-
-            .profile-avatar {
-                width: 100px;
-                height: 100px;
-                border-radius: 50%;
-                background: var(--accent);
-                margin: 0 auto 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 36px;
-                font-weight: 700;
-                color: #000000 !important;
-            }
-
-            /* Progress bar */
-            .stProgress > div > div {
-                background: var(--accent) !important;
-            }
-
-            /* File uploader */
-            .stFileUploader > div {
-                background: var(--bg-secondary) !important;
-                border: 1px dashed var(--border-color) !important;
-                border-radius: 8px !important;
-            }
-
-            /* Alerts */
-            .stAlert { border-radius: 8px !important; }
-
-            /* Hide Streamlit branding */
-            #MainMenu, footer, div[data-testid="stSidebarNav"] { display: none !important; }
-
-            /* Theme toggle */
-            .theme-toggle {
-                position: fixed;
-                top: 14px;
-                right: 80px;
-                z-index: 999;
-                background: var(--bg-secondary);
-                border: 1px solid var(--border-color);
-                border-radius: 6px;
-                padding: 8px 16px;
-                cursor: pointer;
-                font-size: 13px;
-                color: var(--text-primary);
-            }
-        </style>
-        """
-    else:  # Light mode
-        return """
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-            :root {
-                --bg-primary: #fafafa;
-                --bg-secondary: #ffffff;
-                --bg-card: #ffffff;
-                --bg-sidebar: #ffffff;
-                --text-primary: #0a0a0a;
-                --text-secondary: #525252;
-                --text-muted: #a3a3a3;
-                --accent: #0a0a0a;
-                --accent-hover: #262626;
-                --border-color: #e5e5e5;
-                --hover-bg: #f5f5f5;
-                --success: #22c55e;
-                --warning: #f59e0b;
-                --error: #ef4444;
-                --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-                --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
-            }
-
-            * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-
-            .stApp {
-                background: var(--bg-primary);
-            }
-
-            /* All text */
-            .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
-            .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown strong,
-            [data-testid="column"] p, .element-container .stMarkdown p {
-                color: var(--text-primary) !important;
-            }
-
-            /* Form labels */
-            .stTextInput label, .stSelectbox label, .stSlider label,
-            .stCheckbox label, .stTextArea label, .stNumberInput label,
-            .stFileUploader label {
-                color: var(--text-secondary) !important;
-                font-weight: 500;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 0.8px;
-            }
-
-            /* Input fields */
-            .stTextInput > div > div > input,
-            .stTextArea textarea,
-            .stNumberInput > div > div > input {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-                color: var(--text-primary) !important;
-                padding: 12px 16px !important;
-                font-size: 14px !important;
-                transition: border-color 0.2s ease !important;
-            }
-
-            .stTextInput > div > div > input:focus,
-            .stTextArea textarea:focus {
-                border-color: var(--accent) !important;
-                box-shadow: none !important;
-            }
-
-            /* Select box */
-            .stSelectbox > div > div,
-            [data-baseweb="select"] {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-            }
-
-            .stSelectbox [data-baseweb="select"] *,
-            .stSelectbox > div > div > div {
-                color: var(--text-primary) !important;
-            }
-
-            /* Dropdown menus */
-            [data-baseweb="popover"], [data-baseweb="menu"],
-            [data-baseweb="listbox"], [role="listbox"] {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-color) !important;
-                border-radius: 6px !important;
-                box-shadow: var(--shadow-lg) !important;
-            }
-
-            [data-baseweb="popover"] li, [data-baseweb="menu"] li,
-            [data-baseweb="listbox"] li, [role="option"] {
-                background: var(--bg-secondary) !important;
-                color: var(--text-primary) !important;
-            }
-
-            [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
-            [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-                background: var(--hover-bg) !important;
-            }
-
-            /* Slider */
-            .stSlider label, .stSlider p, [data-testid="stSlider"] * {
-                color: var(--text-primary) !important;
-            }
-
-            /* Checkbox */
-            .stCheckbox > label > span {
-                color: var(--text-primary) !important;
-            }
-
-            /* Sidebar - Professional Navigation */
-            [data-testid="stSidebar"] {
-                background: var(--bg-sidebar) !important;
-                border-right: 1px solid var(--border-color);
-            }
-
-            [data-testid="stSidebar"] > div:first-child {
-                padding-top: 1.5rem;
-            }
-
-            [data-testid="stSidebar"] * {
-                color: var(--text-primary) !important;
-            }
-
-            [data-testid="stSidebar"] .stButton > button {
-                background: transparent !important;
-                border: none !important;
-                border-radius: 0 !important;
-                color: var(--text-secondary) !important;
-                padding: 14px 20px !important;
-                text-align: left !important;
-                font-weight: 400 !important;
-                font-size: 14px !important;
-                border-left: 3px solid transparent !important;
-                transition: all 0.2s ease !important;
-                margin: 2px 0 !important;
-            }
-
-            [data-testid="stSidebar"] .stButton > button:hover {
-                background: var(--hover-bg) !important;
-                color: var(--text-primary) !important;
-                border-left-color: var(--accent) !important;
-            }
-
-            /* Tabs */
-            .stTabs [data-baseweb="tab-list"] {
-                background: var(--bg-primary);
-                border-radius: 8px;
-                padding: 4px;
-                gap: 4px;
-                border: 1px solid var(--border-color);
-            }
-
-            .stTabs [data-baseweb="tab"] {
-                background: transparent;
-                color: var(--text-secondary) !important;
-                border-radius: 6px;
-                padding: 10px 20px;
-            }
-
-            .stTabs [aria-selected="true"] {
-                background: var(--accent) !important;
-                color: #ffffff !important;
-            }
-
-            /* Main Buttons */
-            .stButton > button {
-                background: var(--accent) !important;
-                color: #ffffff !important;
-                border: none !important;
-                border-radius: 6px !important;
-                padding: 12px 24px !important;
-                font-weight: 600 !important;
-                font-size: 14px !important;
-                transition: all 0.2s ease !important;
-                letter-spacing: 0.3px !important;
-            }
-
-            .stButton > button:hover {
-                background: var(--accent-hover) !important;
-                transform: translateY(-1px);
-                box-shadow: var(--shadow-lg);
-            }
-
-            /* Cards */
-            .stat-card, .role-card, .profile-card, .attendance-row {
-                background: var(--bg-card) !important;
-                border: 1px solid var(--border-color);
-                border-radius: 10px;
-                box-shadow: var(--shadow);
-            }
-
-            .stat-card { padding: 24px; text-align: center; }
-            .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
-            .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
-
-            .role-card {
-                padding: 40px 28px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .role-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-lg);
-                border-color: var(--accent);
-            }
-
-            .role-icon {
-                width: 72px;
-                height: 72px;
-                border-radius: 50%;
-                background: var(--accent);
-                margin: 0 auto 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 28px;
-                font-weight: 700;
-                color: #ffffff;
-            }
-
-            .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
-            .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
-
-            /* Header bar */
-            .header-bar {
-                background: var(--accent);
-                padding: 20px 24px;
-                border-radius: 10px;
-                margin-bottom: 24px;
-            }
-
-            .header-bar h2, .header-bar p { color: #ffffff !important; }
-
-            /* Section title */
-            .section-title {
-                font-size: 16px;
-                font-weight: 600;
-                color: var(--text-primary) !important;
-                margin: 24px 0 16px 0;
-                padding: 12px 16px;
-                background: var(--bg-secondary);
-                border-radius: 6px;
-                border-left: 3px solid var(--accent);
-            }
-
-            /* Attendance row */
-            .attendance-row {
-                padding: 16px 20px;
-                margin: 8px 0;
-            }
-
-            .attendance-row strong { color: var(--text-primary) !important; }
-            .attendance-row span { color: var(--text-secondary) !important; }
-
-            /* Status badges */
-            .status-present {
-                background: rgba(34, 197, 94, 0.1);
-                color: #16a34a !important;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-            }
-
-            .status-absent {
-                background: rgba(239, 68, 68, 0.1);
-                color: #dc2626 !important;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-            }
-
-            /* Profile card */
-            .profile-card { padding: 36px; text-align: center; }
-            .profile-card h3 { color: var(--text-primary) !important; }
-            .profile-card p { color: var(--text-secondary) !important; }
-
-            .profile-avatar {
-                width: 100px;
-                height: 100px;
-                border-radius: 50%;
-                background: var(--accent);
-                margin: 0 auto 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 36px;
-                font-weight: 700;
-                color: #ffffff !important;
-            }
-
-            /* Progress bar */
-            .stProgress > div > div {
-                background: var(--accent) !important;
-            }
-
-            /* File uploader */
-            .stFileUploader > div {
-                background: var(--bg-secondary) !important;
-                border: 1px dashed var(--border-color) !important;
-                border-radius: 8px !important;
-            }
-
-            /* Alerts */
-            .stAlert { border-radius: 8px !important; }
-
-            /* Hide Streamlit branding */
-            #MainMenu, footer, div[data-testid="stSidebarNav"] { display: none !important; }
-
-            /* Theme toggle */
-            .theme-toggle {
-                position: fixed;
-                top: 14px;
-                right: 80px;
-                z-index: 999;
-                background: var(--bg-secondary);
-                border: 1px solid var(--border-color);
-                border-radius: 6px;
-                padding: 8px 16px;
-                cursor: pointer;
-                font-size: 13px;
-                color: var(--text-primary);
-            }
-        </style>
-        """
-
-# Initialize theme in session state
-if 'theme' not in st.session_state:
-    st.session_state.theme = 'light'
+# Professional White Theme CSS
+THEME_CSS = """
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --bg-primary: #fafafa;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-sidebar: #ffffff;
+        --text-primary: #0a0a0a;
+        --text-secondary: #525252;
+        --text-muted: #a3a3a3;
+        --accent: #0a0a0a;
+        --accent-hover: #262626;
+        --border-color: #e5e5e5;
+        --hover-bg: #f5f5f5;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    .stApp {
+        background: var(--bg-primary);
+    }
+
+    /* All text */
+    .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
+    .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown strong,
+    [data-testid="column"] p, .element-container .stMarkdown p {
+        color: var(--text-primary) !important;
+    }
+
+    /* Form labels */
+    .stTextInput label, .stSelectbox label, .stSlider label,
+    .stCheckbox label, .stTextArea label, .stNumberInput label,
+    .stFileUploader label {
+        color: var(--text-secondary) !important;
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    /* Input fields */
+    .stTextInput > div > div > input,
+    .stTextArea textarea,
+    .stNumberInput > div > div > input {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+        color: var(--text-primary) !important;
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        transition: border-color 0.2s ease !important;
+    }
+
+    .stTextInput > div > div > input:focus,
+    .stTextArea textarea:focus {
+        border-color: var(--accent) !important;
+        box-shadow: none !important;
+    }
+
+    /* Select box */
+    .stSelectbox > div > div,
+    [data-baseweb="select"] {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+    }
+
+    .stSelectbox [data-baseweb="select"] *,
+    .stSelectbox > div > div > div {
+        color: var(--text-primary) !important;
+    }
+
+    /* Dropdown menus */
+    [data-baseweb="popover"], [data-baseweb="menu"],
+    [data-baseweb="listbox"], [role="listbox"] {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+        box-shadow: var(--shadow-lg) !important;
+    }
+
+    [data-baseweb="popover"] li, [data-baseweb="menu"] li,
+    [data-baseweb="listbox"] li, [role="option"] {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
+    [data-baseweb="listbox"] li:hover, [role="option"]:hover {
+        background: var(--hover-bg) !important;
+    }
+
+    /* Slider */
+    .stSlider label, .stSlider p, [data-testid="stSlider"] * {
+        color: var(--text-primary) !important;
+    }
+
+    /* Checkbox */
+    .stCheckbox > label > span {
+        color: var(--text-primary) !important;
+    }
+
+    /* Sidebar - Professional Navigation */
+    [data-testid="stSidebar"] {
+        background: var(--bg-sidebar) !important;
+        border-right: 1px solid var(--border-color);
+    }
+
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 1.5rem;
+    }
+
+    [data-testid="stSidebar"] * {
+        color: var(--text-primary) !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button {
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        color: var(--text-secondary) !important;
+        padding: 14px 20px !important;
+        text-align: left !important;
+        font-weight: 400 !important;
+        font-size: 14px !important;
+        border-left: 3px solid transparent !important;
+        transition: all 0.2s ease !important;
+        margin: 2px 0 !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: var(--hover-bg) !important;
+        color: var(--text-primary) !important;
+        border-left-color: var(--accent) !important;
+    }
+
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 4px;
+        gap: 4px;
+        border: 1px solid var(--border-color);
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        color: var(--text-secondary) !important;
+        border-radius: 6px;
+        padding: 10px 20px;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background: var(--accent) !important;
+        color: #ffffff !important;
+    }
+
+    /* Main Buttons */
+    .stButton > button {
+        background: var(--accent) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 6px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        transition: all 0.2s ease !important;
+        letter-spacing: 0.3px !important;
+    }
+
+    .stButton > button:hover {
+        background: var(--accent-hover) !important;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Cards */
+    .stat-card, .role-card, .profile-card, .attendance-row {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+    }
+
+    .stat-card { padding: 24px; text-align: center; }
+    .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
+    .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+    .role-card {
+        padding: 40px 28px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .role-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .role-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
+    .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
+
+    /* Header bar */
+    .header-bar {
+        background: var(--accent);
+        padding: 20px 24px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+    }
+
+    .header-bar h2, .header-bar p { color: #ffffff !important; }
+
+    /* Section title */
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary) !important;
+        margin: 24px 0 16px 0;
+        padding: 12px 16px;
+        background: var(--bg-secondary);
+        border-radius: 6px;
+        border-left: 3px solid var(--accent);
+    }
+
+    /* Attendance row */
+    .attendance-row {
+        padding: 16px 20px;
+        margin: 8px 0;
+    }
+
+    .attendance-row strong { color: var(--text-primary) !important; }
+    .attendance-row span { color: var(--text-secondary) !important; }
+
+    /* Status badges */
+    .status-present {
+        background: rgba(34, 197, 94, 0.1);
+        color: #16a34a !important;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .status-absent {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626 !important;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    /* Profile card */
+    .profile-card { padding: 36px; text-align: center; }
+    .profile-card h3 { color: var(--text-primary) !important; }
+    .profile-card p { color: var(--text-secondary) !important; }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: 700;
+        color: #ffffff !important;
+    }
+
+    /* Progress bar */
+    .stProgress > div > div {
+        background: var(--accent) !important;
+    }
+
+    /* File uploader */
+    .stFileUploader > div {
+        background: var(--bg-secondary) !important;
+        border: 1px dashed var(--border-color) !important;
+        border-radius: 8px !important;
+    }
+
+    /* Alerts */
+    .stAlert { border-radius: 8px !important; }
+
+    /* Hide Streamlit branding */
+    #MainMenu, footer, div[data-testid="stSidebarNav"] { display: none !important; }
+</style>
+"""
 
 # Apply theme CSS
-st.markdown(get_theme_css(st.session_state.theme), unsafe_allow_html=True)
+st.markdown(THEME_CSS, unsafe_allow_html=True)
 
 
 def init_session_state():
@@ -715,34 +361,15 @@ def init_session_state():
         'student_id': None,
         'username': None,
         'page': 'role_select',
-        'selected_role': None,
-        'theme': 'light'
+        'selected_role': None
     }
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
 
 
-def toggle_theme():
-    """Toggle between light and dark theme"""
-    st.session_state.theme = 'dark' if st.session_state.theme == 'light' else 'light'
-
-
-def show_theme_toggle():
-    """Display theme toggle button"""
-    col1, col2, col3 = st.columns([6, 1, 1])
-    with col3:
-        theme_text = "Dark Mode" if st.session_state.theme == 'light' else "Light Mode"
-        if st.button(theme_text, key="theme_toggle", help="Toggle theme"):
-            toggle_theme()
-            st.rerun()
-
-
 def show_role_selection():
     """Show role selection page - Student or Admin"""
-    # Theme toggle at top
-    show_theme_toggle()
-
     st.markdown("""
     <div style="text-align:center;padding:50px 0 30px;">
         <h1 style="font-size:48px;margin-bottom:12px;font-weight:700;letter-spacing:-1px;">AttendEase</h1>
@@ -803,8 +430,6 @@ def show_role_selection():
 
 def show_student_login():
     """Show student login page"""
-    show_theme_toggle()
-
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
@@ -926,8 +551,6 @@ def show_student_register():
 
 def show_admin_login():
     """Show admin login page"""
-    show_theme_toggle()
-
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
