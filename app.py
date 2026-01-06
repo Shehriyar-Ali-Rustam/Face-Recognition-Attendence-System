@@ -484,8 +484,9 @@ def show_student_register():
     with col2:
         st.markdown("""
         <div style="text-align:center;padding:30px 0;">
-            <h1 style="color:white;font-size:32px;margin-bottom:10px;">Student Registration</h1>
-            <p style="color:rgba(255,255,255,0.7);">Create your account</p>
+            <div class="role-icon" style="margin:0 auto 20px;">R</div>
+            <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Student Registration</h1>
+            <p style="font-size:14px;opacity:0.6;">Create your account</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -606,8 +607,9 @@ def show_admin_register_self():
     with col2:
         st.markdown("""
         <div style="text-align:center;padding:30px 0;">
-            <h1 style="color:white;font-size:32px;margin-bottom:10px;">Admin Registration</h1>
-            <p style="color:rgba(255,255,255,0.7);">Create new admin account</p>
+            <div class="role-icon" style="margin:0 auto 20px;">R</div>
+            <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Admin Registration</h1>
+            <p style="font-size:14px;opacity:0.6;">Create new admin account</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1298,7 +1300,7 @@ def show_admin_capture():
         """, unsafe_allow_html=True)
 
         # Tabs for different methods
-        tab1, tab2 = st.tabs(["📷 Camera Capture", "📁 Upload Photos"])
+        tab1, tab2 = st.tabs(["Camera Capture", "Upload Photos"])
 
         with tab1:
             st.markdown("**Capture faces using camera**")
@@ -1619,9 +1621,10 @@ def process_uploaded_photos(student_id: str, student_name: str, uploaded_files, 
 def show_quick_attendance():
     """Quick attendance marking without login"""
     st.markdown("""
-    <div style="text-align:center;padding:30px 0;">
-        <h1 style="color:white;font-size:32px;margin-bottom:10px;">Quick Attendance</h1>
-        <p style="color:rgba(255,255,255,0.7);">Face scan to mark your attendance</p>
+    <div style="text-align:center;padding:40px 0 30px;">
+        <div class="role-icon" style="margin:0 auto 20px;">Q</div>
+        <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Quick Attendance</h1>
+        <p style="font-size:14px;opacity:0.6;">Face scan to mark your attendance</p>
     </div>
     """, unsafe_allow_html=True)
 
