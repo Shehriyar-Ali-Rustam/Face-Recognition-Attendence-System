@@ -23,61 +23,70 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS
+# Custom CSS - Professional Indigo Theme
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
     .main-header {
         font-size: 2rem;
         font-weight: 600;
-        color: #1a1a2e;
+        color: #1e293b;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #0f3460;
+        border-bottom: 3px solid #4f46e5;
     }
     .sub-header {
         font-size: 1.2rem;
         font-weight: 500;
-        color: #16213e;
+        color: #1e293b;
         margin-top: 1.5rem;
         margin-bottom: 1rem;
     }
     .stat-card {
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
         margin: 0.5rem 0;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     }
     .stat-number {
         font-size: 2rem;
         font-weight: 700;
-        color: #1a1a2e;
+        color: #4f46e5;
     }
     .stat-label {
-        font-size: 0.9rem;
-        color: #6c757d;
+        font-size: 0.85rem;
+        color: #64748b;
         margin-top: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     .training-log {
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
         padding: 1rem;
-        font-family: monospace;
+        font-family: 'SF Mono', Monaco, monospace;
+        font-size: 13px;
         max-height: 300px;
         overflow-y: auto;
+        color: #1e293b;
     }
     .stButton>button {
-        background-color: #1a1a2e;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         color: white;
         border: none;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        font-weight: 500;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
     }
     .stButton>button:hover {
-        background-color: #0f3460;
+        filter: brightness(1.1);
+        transform: translateY(-1px);
     }
 </style>
 """, unsafe_allow_html=True)

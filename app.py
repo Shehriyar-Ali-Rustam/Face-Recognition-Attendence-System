@@ -1,7 +1,7 @@
 """
 Face Recognition Attendance System
 Main Application with Separate Student/Admin Portals
-Professional White Theme UI
+Professional Indigo Theme UI
 """
 
 import streamlit as st
@@ -32,31 +32,60 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Professional White Theme CSS
+# Professional Indigo Theme CSS - Modern & Trustworthy
 THEME_CSS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     :root {
-        --bg-primary: #fafafa;
+        /* Primary Colors - Deep Indigo/Blue */
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --primary-light: #6366f1;
+        --primary-50: #eef2ff;
+        --primary-100: #e0e7ff;
+
+        /* Background Colors */
+        --bg-primary: #f8fafc;
         --bg-secondary: #ffffff;
         --bg-card: #ffffff;
-        --bg-sidebar: #ffffff;
-        --text-primary: #0a0a0a;
-        --text-secondary: #525252;
-        --text-muted: #a3a3a3;
-        --accent: #0a0a0a;
-        --accent-hover: #262626;
-        --border-color: #e5e5e5;
-        --hover-bg: #f5f5f5;
-        --success: #22c55e;
+        --bg-sidebar: #1e1b4b;
+
+        /* Text Colors */
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --text-light: #f1f5f9;
+
+        /* Accent & Status Colors */
+        --accent: #4f46e5;
+        --accent-hover: #4338ca;
+        --success: #10b981;
+        --success-bg: rgba(16, 185, 129, 0.1);
         --warning: #f59e0b;
+        --warning-bg: rgba(245, 158, 11, 0.1);
         --error: #ef4444;
-        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+        --error-bg: rgba(239, 68, 68, 0.1);
+
+        /* Borders & Shadows */
+        --border-color: #e2e8f0;
+        --border-light: #f1f5f9;
+        --hover-bg: #f1f5f9;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+        /* Gradients */
+        --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        --gradient-dark: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
     }
 
-    * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
 
     .stApp {
         background: var(--bg-primary);
@@ -77,7 +106,7 @@ THEME_CSS = """
         font-weight: 500;
         font-size: 12px;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.5px;
     }
 
     /* Input fields */
@@ -85,26 +114,30 @@ THEME_CSS = """
     .stTextArea textarea,
     .stNumberInput > div > div > input {
         background: var(--bg-secondary) !important;
-        border: 1px solid var(--border-color) !important;
-        border-radius: 6px !important;
+        border: 1.5px solid var(--border-color) !important;
+        border-radius: 8px !important;
         color: var(--text-primary) !important;
         padding: 12px 16px !important;
         font-size: 14px !important;
-        transition: border-color 0.2s ease !important;
+        transition: all 0.2s ease !important;
     }
 
     .stTextInput > div > div > input:focus,
     .stTextArea textarea:focus {
-        border-color: var(--accent) !important;
-        box-shadow: none !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px var(--primary-100) !important;
+    }
+
+    .stTextInput > div > div > input::placeholder {
+        color: var(--text-muted) !important;
     }
 
     /* Select box */
     .stSelectbox > div > div,
     [data-baseweb="select"] {
         background: var(--bg-secondary) !important;
-        border: 1px solid var(--border-color) !important;
-        border-radius: 6px !important;
+        border: 1.5px solid var(--border-color) !important;
+        border-radius: 8px !important;
     }
 
     .stSelectbox [data-baseweb="select"] *,
@@ -117,19 +150,21 @@ THEME_CSS = """
     [data-baseweb="listbox"], [role="listbox"] {
         background: var(--bg-secondary) !important;
         border: 1px solid var(--border-color) !important;
-        border-radius: 6px !important;
-        box-shadow: var(--shadow-lg) !important;
+        border-radius: 10px !important;
+        box-shadow: var(--shadow-xl) !important;
+        overflow: hidden;
     }
 
     [data-baseweb="popover"] li, [data-baseweb="menu"] li,
     [data-baseweb="listbox"] li, [role="option"] {
         background: var(--bg-secondary) !important;
         color: var(--text-primary) !important;
+        padding: 10px 16px !important;
     }
 
     [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
     [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-        background: var(--hover-bg) !important;
+        background: var(--primary-50) !important;
     }
 
     /* Slider */
@@ -137,49 +172,61 @@ THEME_CSS = """
         color: var(--text-primary) !important;
     }
 
+    .stSlider [data-baseweb="slider"] div[role="slider"] {
+        background: var(--primary) !important;
+    }
+
     /* Checkbox */
     .stCheckbox > label > span {
         color: var(--text-primary) !important;
     }
 
-    /* Sidebar - Professional Navigation */
+    /* Sidebar - Dark Indigo Theme */
     [data-testid="stSidebar"] {
-        background: var(--bg-sidebar) !important;
-        border-right: 1px solid var(--border-color);
+        background: var(--gradient-dark) !important;
+        border-right: none;
     }
 
     [data-testid="stSidebar"] > div:first-child {
         padding-top: 1.5rem;
+        background: transparent !important;
     }
 
     [data-testid="stSidebar"] * {
-        color: var(--text-primary) !important;
+        color: var(--text-light) !important;
+    }
+
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255,255,255,0.1) !important;
     }
 
     [data-testid="stSidebar"] .stButton > button {
         background: transparent !important;
         border: none !important;
-        border-radius: 0 !important;
-        color: var(--text-secondary) !important;
-        padding: 14px 20px !important;
+        border-radius: 8px !important;
+        color: rgba(255,255,255,0.7) !important;
+        padding: 12px 16px !important;
         text-align: left !important;
         font-weight: 400 !important;
         font-size: 14px !important;
-        border-left: 3px solid transparent !important;
         transition: all 0.2s ease !important;
-        margin: 2px 0 !important;
+        margin: 2px 8px !important;
     }
 
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: var(--hover-bg) !important;
-        color: var(--text-primary) !important;
-        border-left-color: var(--accent) !important;
+        background: rgba(255,255,255,0.1) !important;
+        color: #ffffff !important;
     }
 
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        background: var(--bg-primary);
-        border-radius: 8px;
+        background: var(--bg-secondary);
+        border-radius: 10px;
         padding: 4px;
         gap: 4px;
         border: 1px solid var(--border-color);
@@ -188,45 +235,74 @@ THEME_CSS = """
     .stTabs [data-baseweb="tab"] {
         background: transparent;
         color: var(--text-secondary) !important;
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 10px 20px;
+        font-weight: 500;
     }
 
     .stTabs [aria-selected="true"] {
-        background: var(--accent) !important;
+        background: var(--primary) !important;
         color: #ffffff !important;
     }
 
     /* Main Buttons */
     .stButton > button {
-        background: var(--accent) !important;
+        background: var(--gradient-primary) !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         padding: 12px 24px !important;
         font-weight: 600 !important;
         font-size: 14px !important;
         transition: all 0.2s ease !important;
         letter-spacing: 0.3px !important;
+        box-shadow: var(--shadow-sm) !important;
     }
 
     .stButton > button:hover {
-        background: var(--accent-hover) !important;
+        background: var(--gradient-primary) !important;
+        filter: brightness(1.1);
         transform: translateY(-1px);
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-md) !important;
+    }
+
+    .stButton > button:active {
+        transform: translateY(0);
     }
 
     /* Cards */
     .stat-card, .role-card, .profile-card, .attendance-row {
         background: var(--bg-card) !important;
         border: 1px solid var(--border-color);
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: var(--shadow);
+        transition: all 0.2s ease;
     }
 
-    .stat-card { padding: 24px; text-align: center; }
-    .stat-value { font-size: 36px; font-weight: 700; color: var(--text-primary) !important; }
-    .stat-label { font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+    .stat-card {
+        padding: 24px;
+        text-align: center;
+    }
+
+    .stat-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary) !important;
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: var(--text-muted) !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 8px;
+        font-weight: 500;
+    }
 
     .role-card {
         padding: 40px 28px;
@@ -236,16 +312,16 @@ THEME_CSS = """
     }
 
     .role-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--accent);
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-light);
     }
 
     .role-icon {
         width: 72px;
         height: 72px;
-        border-radius: 50%;
-        background: var(--accent);
+        border-radius: 16px;
+        background: var(--gradient-primary);
         margin: 0 auto 20px;
         display: flex;
         align-items: center;
@@ -253,37 +329,64 @@ THEME_CSS = """
         font-size: 28px;
         font-weight: 700;
         color: #ffffff;
+        box-shadow: var(--shadow-md);
     }
 
-    .role-title { font-size: 18px; font-weight: 600; color: var(--text-primary) !important; margin-bottom: 10px; letter-spacing: 0.3px; }
-    .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.6; }
+    .role-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary) !important;
+        margin-bottom: 10px;
+        letter-spacing: 0.3px;
+    }
+
+    .role-desc {
+        font-size: 13px;
+        color: var(--text-secondary) !important;
+        line-height: 1.6;
+    }
 
     /* Header bar */
     .header-bar {
-        background: var(--accent);
-        padding: 20px 24px;
-        border-radius: 10px;
+        background: var(--gradient-primary);
+        padding: 24px 28px;
+        border-radius: 12px;
         margin-bottom: 24px;
+        box-shadow: var(--shadow-md);
     }
 
-    .header-bar h2, .header-bar p { color: #ffffff !important; }
+    .header-bar h2 {
+        color: #ffffff !important;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .header-bar p {
+        color: rgba(255,255,255,0.85) !important;
+        margin: 6px 0 0 0;
+    }
 
     /* Section title */
     .section-title {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         color: var(--text-primary) !important;
         margin: 24px 0 16px 0;
-        padding: 12px 16px;
-        background: var(--bg-secondary);
-        border-radius: 6px;
-        border-left: 3px solid var(--accent);
+        padding: 14px 18px;
+        background: var(--primary-50);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary);
     }
 
     /* Attendance row */
     .attendance-row {
         padding: 16px 20px;
         margin: 8px 0;
+        transition: all 0.2s ease;
+    }
+
+    .attendance-row:hover {
+        background: var(--hover-bg) !important;
     }
 
     .attendance-row strong { color: var(--text-primary) !important; }
@@ -291,8 +394,8 @@ THEME_CSS = """
 
     /* Status badges */
     .status-present {
-        background: rgba(34, 197, 94, 0.1);
-        color: #16a34a !important;
+        background: var(--success-bg);
+        color: var(--success) !important;
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
@@ -301,8 +404,8 @@ THEME_CSS = """
     }
 
     .status-absent {
-        background: rgba(239, 68, 68, 0.1);
-        color: #dc2626 !important;
+        background: var(--error-bg);
+        color: var(--error) !important;
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
@@ -311,15 +414,26 @@ THEME_CSS = """
     }
 
     /* Profile card */
-    .profile-card { padding: 36px; text-align: center; }
-    .profile-card h3 { color: var(--text-primary) !important; }
-    .profile-card p { color: var(--text-secondary) !important; }
+    .profile-card {
+        padding: 40px;
+        text-align: center;
+    }
+
+    .profile-card h3 {
+        color: var(--text-primary) !important;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .profile-card p {
+        color: var(--text-secondary) !important;
+    }
 
     .profile-avatar {
         width: 100px;
         height: 100px;
-        border-radius: 50%;
-        background: var(--accent);
+        border-radius: 20px;
+        background: var(--gradient-primary);
         margin: 0 auto 20px;
         display: flex;
         align-items: center;
@@ -327,25 +441,90 @@ THEME_CSS = """
         font-size: 36px;
         font-weight: 700;
         color: #ffffff !important;
+        box-shadow: var(--shadow-md);
     }
 
     /* Progress bar */
     .stProgress > div > div {
-        background: var(--accent) !important;
+        background: var(--gradient-primary) !important;
+        border-radius: 4px;
     }
 
     /* File uploader */
     .stFileUploader > div {
         background: var(--bg-secondary) !important;
-        border: 1px dashed var(--border-color) !important;
-        border-radius: 8px !important;
+        border: 2px dashed var(--border-color) !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease;
+    }
+
+    .stFileUploader > div:hover {
+        border-color: var(--primary) !important;
+        background: var(--primary-50) !important;
     }
 
     /* Alerts */
-    .stAlert { border-radius: 8px !important; }
+    .stAlert {
+        border-radius: 10px !important;
+        border: none !important;
+    }
+
+    /* Info box styling */
+    .stInfo {
+        background: var(--primary-50) !important;
+        color: var(--primary-dark) !important;
+    }
+
+    /* Success message */
+    .stSuccess {
+        background: var(--success-bg) !important;
+    }
+
+    /* Warning message */
+    .stWarning {
+        background: var(--warning-bg) !important;
+    }
+
+    /* Error message */
+    .stError {
+        background: var(--error-bg) !important;
+    }
+
+    /* Divider */
+    hr {
+        border-color: var(--border-color) !important;
+        margin: 20px 0 !important;
+    }
+
+    /* Form styling */
+    [data-testid="stForm"] {
+        background: var(--bg-secondary);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
 
     /* Hide Streamlit branding */
     #MainMenu, footer, div[data-testid="stSidebarNav"] { display: none !important; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+    }
 </style>
 """
 
@@ -689,11 +868,11 @@ def show_student_dashboard():
     with col1:
         st.markdown(f'<div class="stat-card"><div class="stat-value">{stats["total"]}</div><div class="stat-label">Total Classes</div></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#28a745;">{stats["present"]}</div><div class="stat-label">Present</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#10b981;">{stats["present"]}</div><div class="stat-label">Present</div></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#dc3545;">{stats["absent"]}</div><div class="stat-label">Absent</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#ef4444;">{stats["absent"]}</div><div class="stat-label">Absent</div></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#0f3460;">{stats["percentage"]}%</div><div class="stat-label">Attendance</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#4f46e5;">{stats["percentage"]}%</div><div class="stat-label">Attendance</div></div>', unsafe_allow_html=True)
 
     # Recent attendance
     st.markdown('<div class="section-title">Recent Attendance</div>', unsafe_allow_html=True)
@@ -705,7 +884,7 @@ def show_student_dashboard():
             time_str = record.time_in.strftime('%H:%M') if record.time_in else 'N/A'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{record.date.strftime('%B %d, %Y')}</strong><br><span style="font-size:12px;color:#6c757d;">Time: {time_str}</span></div>
+                <div><strong>{record.date.strftime('%B %d, %Y')}</strong><br><span style="font-size:12px;color:#64748b;">Time: {time_str}</span></div>
                 <span class="{status_class}">{record.status}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -758,7 +937,7 @@ def show_mark_attendance():
 
     with col2:
         status = "Present" if already_marked else "Pending"
-        color = "#28a745" if already_marked else "#ffc107"
+        color = "#10b981" if already_marked else "#f59e0b"
         st.markdown(f"""
         <div class="stat-card">
             <div class="stat-value" style="color:{color};font-size:24px;">{status}</div>
@@ -769,7 +948,7 @@ def show_mark_attendance():
         # Show face registration status
         if not already_marked:
             face_status = "Registered" if face_registered else "Not Registered"
-            face_color = "#28a745" if face_registered else "#dc3545"
+            face_color = "#10b981" if face_registered else "#ef4444"
             st.markdown(f"""
             <div class="stat-card" style="margin-top:15px;">
                 <div class="stat-value" style="color:{face_color};font-size:18px;">{face_status}</div>
@@ -902,8 +1081,8 @@ def show_student_profile():
         <div class="profile-card">
             <div class="profile-avatar">{initial}</div>
             <h3>{student.name if student else 'Student'}</h3>
-            <p style="color:#6c757d;">{student.student_id if student else ''}</p>
-            <p style="color:#0f3460;">{student.department if student else ''}</p>
+            <p style="color:#64748b;">{student.student_id if student else ''}</p>
+            <p style="color:#4f46e5;">{student.department if student else ''}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1027,7 +1206,7 @@ def show_attendance_history():
             time_out = record.time_out.strftime('%H:%M:%S') if record.time_out else '-'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{record.date.strftime('%A, %B %d, %Y')}</strong><br><span style="font-size:12px;color:#6c757d;">In: {time_in} | Out: {time_out}</span></div>
+                <div><strong>{record.date.strftime('%A, %B %d, %Y')}</strong><br><span style="font-size:12px;color:#64748b;">In: {time_in} | Out: {time_out}</span></div>
                 <span class="{status_class}">{record.status}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -1079,11 +1258,11 @@ def show_admin_dashboard():
     with col1:
         st.markdown(f'<div class="stat-card"><div class="stat-value">{total_students}</div><div class="stat-label">Total Students</div></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#28a745;">{today_attendance}</div><div class="stat-label">Present Today</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#10b981;">{today_attendance}</div><div class="stat-label">Present Today</div></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#dc3545;">{absent}</div><div class="stat-label">Absent Today</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#ef4444;">{absent}</div><div class="stat-label">Absent Today</div></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#0f3460;">{rate}%</div><div class="stat-label">Attendance Rate</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#4f46e5;">{rate}%</div><div class="stat-label">Attendance Rate</div></div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Today\'s Attendance</div>', unsafe_allow_html=True)
     records = AttendanceOperations.get_daily_attendance()
@@ -1094,8 +1273,8 @@ def show_admin_dashboard():
             time_str = record.time_in.strftime('%H:%M:%S') if record.time_in else 'N/A'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{student.name if student else record.student_id}</strong><br><span style="font-size:12px;color:#6c757d;">{record.student_id}</span></div>
-                <div><span style="font-size:12px;color:#6c757d;">{time_str}</span> <span class="status-present" style="margin-left:10px;">{record.status}</span></div>
+                <div><strong>{student.name if student else record.student_id}</strong><br><span style="font-size:12px;color:#64748b;">{record.student_id}</span></div>
+                <div><span style="font-size:12px;color:#64748b;">{time_str}</span> <span class="status-present" style="margin-left:10px;">{record.status}</span></div>
             </div>
             """, unsafe_allow_html=True)
     else:
@@ -1126,8 +1305,8 @@ def show_admin_students():
         with col1:
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{student.name}</strong><br><span style="font-size:12px;color:#6c757d;">{student.student_id} | {student.department or 'N/A'}</span></div>
-                <div><span style="font-size:12px;color:#1a1a2e;">{stats['percentage']}%</span> <span class="{face_status}" style="margin-left:10px;">{face_text}</span></div>
+                <div><strong>{student.name}</strong><br><span style="font-size:12px;color:#64748b;">{student.student_id} | {student.department or 'N/A'}</span></div>
+                <div><span style="font-size:12px;color:#4f46e5;font-weight:600;">{stats['percentage']}%</span> <span class="{face_status}" style="margin-left:10px;">{face_text}</span></div>
             </div>
             """, unsafe_allow_html=True)
         with col2:
@@ -1159,9 +1338,9 @@ def show_admin_edit_student():
     # Student info card
     st.markdown(f"""
     <div class="stat-card" style="text-align:left;margin-bottom:20px;">
-        <strong style="color:#1a1a2e;">Student ID:</strong> <span style="color:#6c757d;">{student.student_id}</span><br>
-        <strong style="color:#1a1a2e;">Face Status:</strong> <span style="color:{'#28a745' if student.face_encoding else '#dc3545'};">{'Registered' if student.face_encoding else 'Not Registered'}</span><br>
-        <strong style="color:#1a1a2e;">Images:</strong> <span style="color:#6c757d;">{student.image_count or 0}</span>
+        <strong style="color:#1e293b;">Student ID:</strong> <span style="color:#64748b;">{student.student_id}</span><br>
+        <strong style="color:#1e293b;">Face Status:</strong> <span style="color:{'#10b981' if student.face_encoding else '#ef4444'};">{'Registered' if student.face_encoding else 'Not Registered'}</span><br>
+        <strong style="color:#1e293b;">Images:</strong> <span style="color:#64748b;">{student.image_count or 0}</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1294,8 +1473,8 @@ def show_admin_capture():
         # Student info card
         st.markdown(f"""
         <div class="stat-card" style="text-align:left;margin:15px 0;">
-            <strong style="color:#1a1a2e;">{student.name}</strong><br>
-            <span style="color:#6c757d;font-size:14px;">Current images: {existing} | Min required: 5</span>
+            <strong style="color:#1e293b;">{student.name}</strong><br>
+            <span style="color:#64748b;font-size:14px;">Current images: {existing} | Min required: 5</span>
         </div>
         """, unsafe_allow_html=True)
 

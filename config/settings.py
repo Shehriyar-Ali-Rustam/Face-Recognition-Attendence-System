@@ -70,16 +70,20 @@ LIVENESS_SETTINGS = {
     "required_blinks": 2,
 }
 
-# UI Theme colors (professional, minimal)
+# UI Theme colors (Professional Indigo)
 THEME = {
-    "primary": "#1a1a2e",
-    "secondary": "#16213e",
-    "accent": "#0f3460",
-    "text": "#eaeaea",
-    "success": "#4ecca3",
-    "warning": "#ffc107",
-    "error": "#dc3545",
-    "background": "#0f0f23",
+    "primary": "#4f46e5",
+    "primary_dark": "#4338ca",
+    "primary_light": "#6366f1",
+    "secondary": "#1e1b4b",
+    "accent": "#7c3aed",
+    "text_primary": "#1e293b",
+    "text_secondary": "#64748b",
+    "success": "#10b981",
+    "warning": "#f59e0b",
+    "error": "#ef4444",
+    "background": "#f8fafc",
+    "card": "#ffffff",
 }
 
 # Logging settings
