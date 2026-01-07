@@ -452,16 +452,37 @@ THEME_CSS = """
     }
 
     /* File uploader */
-    .stFileUploader > div {
-        background: var(--bg-secondary) !important;
-        border: 2px dashed var(--border-color) !important;
+    .stFileUploader > div,
+    .stFileUploader section,
+    .stFileUploader [data-testid="stFileUploader"],
+    .stFileUploader [data-testid="stFileUploaderDropzone"],
+    [data-testid="stFileUploaderDropzone"] {
+        background: #ffffff !important;
+        border: 2px dashed #e5e5e5 !important;
         border-radius: 12px !important;
         transition: all 0.2s ease;
     }
 
-    .stFileUploader > div:hover {
+    .stFileUploader > div:hover,
+    [data-testid="stFileUploaderDropzone"]:hover {
         border-color: var(--primary) !important;
-        background: var(--primary-50) !important;
+        background: #fff7ed !important;
+    }
+
+    /* File uploader text */
+    .stFileUploader span,
+    .stFileUploader p,
+    .stFileUploader small,
+    [data-testid="stFileUploaderDropzone"] span,
+    [data-testid="stFileUploaderDropzone"] p {
+        color: #525252 !important;
+    }
+
+    /* File uploader button */
+    .stFileUploader button,
+    [data-testid="stFileUploaderDropzone"] button {
+        background: var(--primary) !important;
+        color: #ffffff !important;
     }
 
     /* Alerts */
