@@ -436,17 +436,15 @@ def show_role_selection():
             background-size: cover;
             background-position: center 20%;
             background-repeat: no-repeat;
+            opacity: 0.35;
+            filter: blur(3px);
+            transform: scale(1.04);
         }}
         .hero-bg-wrapper::after {{
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(5, 10, 25, 0.82) 0%,
-                rgba(5, 10, 25, 0.60) 50%,
-                rgba(5, 10, 25, 0.80) 100%
-            );
+            background: rgba(5, 10, 25, 0.55);
         }}
         /* ===== GLASS CARDS ===== */
         .glass-card {{
