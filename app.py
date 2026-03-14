@@ -397,6 +397,14 @@ THEME_CSS = """
 # Apply theme CSS
 st.markdown(THEME_CSS, unsafe_allow_html=True)
 
+# Load hero image as base64
+import base64 as _b64
+_hero_path = BASE_DIR / "HERO IMAGE.webp"
+_HERO_B64 = ""
+if _hero_path.exists():
+    with open(_hero_path, "rb") as _f:
+        _HERO_B64 = _b64.b64encode(_f.read()).decode()
+
 
 def init_session_state():
     """Initialize session state"""
@@ -414,48 +422,115 @@ def init_session_state():
 
 
 def show_role_selection():
-    """Show role selection page"""
-    # Hero header
+    """Show role selection page — full hero background with glass UI"""
+
+    # Full-viewport hero with the face recognition image
+    st.markdown(f"""
+    <style>
+        /* ===== HERO PAGE BACKGROUND ===== */
+        .hero-bg-wrapper {{
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: url('data:image/webp;base64,{_HERO_B64}');
+            background-size: cover;
+            background-position: center 20%;
+            background-repeat: no-repeat;
+        }}
+        .hero-bg-wrapper::after {{
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(5, 10, 25, 0.82) 0%,
+                rgba(5, 10, 25, 0.60) 50%,
+                rgba(5, 10, 25, 0.80) 100%
+            );
+        }}
+        /* ===== GLASS CARDS ===== */
+        .glass-card {{
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 32px 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }}
+        .glass-card:hover {{
+            background: rgba(255,255,255,0.10);
+            border-color: rgba(112,230,237,0.35);
+            box-shadow: 0 8px 40px rgba(112,230,237,0.12);
+            transform: translateY(-4px);
+        }}
+        .glass-quick {{
+            background: rgba(112,230,237,0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(112,230,237,0.25);
+            border-radius: 20px;
+            padding: 36px 32px;
+            text-align: center;
+        }}
+        .glass-divider {{
+            display: flex; align-items: center;
+            margin: 36px auto; max-width: 560px;
+        }}
+        .glass-divider-line {{ flex:1; height:1px; background:rgba(255,255,255,0.10); }}
+        .glass-divider-text {{ padding:0 20px; font-size:11px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:2.5px; }}
+        /* Ensure content sits above hero bg */
+        .block-container {{ position: relative; z-index: 1; }}
+        [data-testid="stVerticalBlock"] {{ position: relative; z-index: 1; }}
+    </style>
+    <div class="hero-bg-wrapper"></div>
+    """, unsafe_allow_html=True)
+
+    # Hero headline
     st.markdown("""
-    <div style="text-align:center;padding:64px 0 32px;">
-        <div style="width:56px;height:56px;border-radius:14px;background:#70E6ED;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:24px;">📸</div>
-        <h1 style="font-size:36px;font-weight:800;color:#ffffff;margin:0 0 10px;letter-spacing:-0.5px;">AttendEase</h1>
-        <p style="font-size:16px;color:#666;margin:0;">Smart Face Recognition Attendance System</p>
+    <div style="text-align:center;padding:72px 0 36px;position:relative;z-index:1;">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(112,230,237,0.10);border:1px solid rgba(112,230,237,0.25);padding:6px 16px;border-radius:100px;margin-bottom:22px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#70E6ED;"></div>
+            <span style="font-size:12px;color:#70E6ED;font-weight:600;letter-spacing:1px;text-transform:uppercase;">AI-Powered Attendance</span>
+        </div>
+        <h1 style="font-size:48px;font-weight:900;color:#ffffff;margin:0 0 14px;letter-spacing:-1.5px;line-height:1.1;">AttendEase</h1>
+        <p style="font-size:16px;color:rgba(255,255,255,0.5);margin:0;font-weight:400;">Smart Face Recognition · Instant Verification · Zero Friction</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Quick Attendance Card
+    # Quick Attendance glass card
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-        <div class="quick-attendance-card">
-            <div style="font-size:32px;margin-bottom:14px;">⚡</div>
-            <h2>Quick Attendance</h2>
-            <p>Scan your face to mark attendance instantly — no login required</p>
+        <div class="glass-quick">
+            <div style="font-size:36px;margin-bottom:12px;">⚡</div>
+            <h2 style="font-size:20px;font-weight:700;color:#fff;margin:0 0 8px;">Quick Attendance</h2>
+            <p style="font-size:14px;color:rgba(255,255,255,0.5);margin:0 0 20px;line-height:1.6;">Scan your face to mark attendance instantly — no login required</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Scan Face Now", key="quick_attendance_btn", use_container_width=True, type="primary"):
+        if st.button("⚡  Scan Face Now", key="quick_attendance_btn", use_container_width=True, type="primary"):
             st.session_state.page = 'quick_attendance'
             st.rerun()
 
     # Divider
     st.markdown("""
-    <div style="display:flex;align-items:center;margin:40px auto;max-width:600px;">
-        <div style="flex:1;height:1px;background:#222;"></div>
-        <span style="padding:0 20px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:2px;">or sign in as</span>
-        <div style="flex:1;height:1px;background:#222;"></div>
+    <div class="glass-divider">
+        <div class="glass-divider-line"></div>
+        <span class="glass-divider-text">or sign in as</span>
+        <div class="glass-divider-line"></div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Login Portals
+    # Login Portals — glass cards
     col1, col_a, col_b, col4 = st.columns([0.5, 1, 1, 0.5])
 
     with col_a:
         st.markdown("""
-        <div class="role-card" style="min-height:220px;">
-            <div class="role-icon">🎓</div>
-            <div class="role-title">Student Portal</div>
-            <div class="role-desc">Mark attendance, view records, and manage your profile</div>
+        <div class="glass-card" style="min-height:200px;">
+            <div style="width:56px;height:56px;border-radius:14px;background:rgba(112,230,237,0.15);border:1px solid rgba(112,230,237,0.3);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:24px;">🎓</div>
+            <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;">Student Portal</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;">Mark attendance, view records, and manage your profile</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Student Login", key="student_btn", use_container_width=True):
@@ -465,10 +540,10 @@ def show_role_selection():
 
     with col_b:
         st.markdown("""
-        <div class="role-card" style="min-height:220px;border-color:#333;">
-            <div class="role-icon" style="background:#CAF291;">🛡️</div>
-            <div class="role-title">Admin Portal</div>
-            <div class="role-desc">Manage students, train models, and generate reports</div>
+        <div class="glass-card" style="min-height:200px;border-color:rgba(202,242,145,0.2);">
+            <div style="width:56px;height:56px;border-radius:14px;background:rgba(202,242,145,0.12);border:1px solid rgba(202,242,145,0.3);margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:24px;">🛡️</div>
+            <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;">Admin Portal</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;">Manage students, train models, and generate reports</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Admin Login", key="admin_btn", use_container_width=True):
@@ -477,8 +552,8 @@ def show_role_selection():
             st.rerun()
 
     st.markdown("""
-    <div style="text-align:center;padding:40px 0 16px;">
-        <p style="font-size:12px;color:#3a3a3a;letter-spacing:1px;">Powered by Face Recognition AI</p>
+    <div style="text-align:center;padding:40px 0 24px;">
+        <p style="font-size:12px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase;">Powered by Face Recognition AI</p>
     </div>
     """, unsafe_allow_html=True)
 
