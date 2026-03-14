@@ -1,7 +1,7 @@
 """
 Face Recognition Attendance System
 Main Application with Separate Student/Admin Portals
-Professional Orange, White & Black Theme UI
+Premium Dark Glassmorphism UI with Unsplash Backgrounds
 """
 
 import streamlit as st
@@ -29,671 +29,358 @@ st.set_page_config(
     page_title="AttendEase - Smart Attendance",
     page_icon="A",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="auto"
 )
 
-# Professional Orange, White & Black Theme CSS
+# Professional Dark Theme CSS — Linear/Vercel inspired
 THEME_CSS = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined' !important; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; -webkit-font-smoothing: antialiased; }
 
     :root {
-        /* Primary Colors - Orange */
-        --primary: #f97316;
-        --primary-dark: #ea580c;
-        --primary-light: #fb923c;
-        --primary-50: #fff7ed;
-        --primary-100: #ffedd5;
+        --primary: #70E6ED;
+        --primary-dark: #4dd4db;
+        --primary-light: #a8f0f4;
+        --accent-lime: #CAF291;
 
-        /* Background Colors - White */
-        --bg-primary: #ffffff;
-        --bg-secondary: #fafafa;
-        --bg-card: #ffffff;
-        --bg-sidebar: #ffffff;
+        --bg-app: #0d0d0d;
+        --bg-surface: #111111;
+        --bg-card: #181818;
+        --bg-card-hover: #1e1e1e;
+        --bg-input: #1a1a1a;
+        --bg-sidebar: #111111;
 
-        /* Text Colors - Black */
-        --text-primary: #171717;
-        --text-secondary: #525252;
-        --text-muted: #a3a3a3;
-        --text-light: #fafafa;
+        --text-primary: #ededed;
+        --text-secondary: #888888;
+        --text-muted: #555555;
+        --text-bright: #ffffff;
 
-        /* Accent & Status Colors */
-        --accent: #f97316;
-        --accent-hover: #ea580c;
-        --success: #22c55e;
-        --success-bg: rgba(34, 197, 94, 0.1);
-        --warning: #f97316;
-        --warning-bg: rgba(249, 115, 22, 0.1);
-        --error: #ef4444;
-        --error-bg: rgba(239, 68, 68, 0.1);
+        --success: #4ade80;
+        --success-bg: rgba(74, 222, 128, 0.10);
+        --warning: #fbbf24;
+        --warning-bg: rgba(251, 191, 36, 0.10);
+        --error: #f87171;
+        --error-bg: rgba(248, 113, 113, 0.10);
 
-        /* Borders & Shadows */
-        --border-color: #e5e5e5;
-        --border-light: #f5f5f5;
-        --hover-bg: #f5f5f5;
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        --border: #222222;
+        --border-light: #2a2a2a;
+        --border-focus: #70E6ED;
+
+        --shadow: 0 1px 3px rgba(0,0,0,0.4);
+        --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+        --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+
+        --radius: 12px;
+        --radius-sm: 8px;
+        --radius-lg: 16px;
     }
 
-    * {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* ===== GLOBAL ===== */
+    body, p, span, div, label, input, textarea, select, button, h1, h2, h3, h4, h5, li, a {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         -webkit-font-smoothing: antialiased;
     }
+    /* Preserve icon fonts — don't override Streamlit's icon buttons */
+    [data-testid="collapsedControl"] { display: none !important; }
+    [data-testid="stToolbar"] { display: none !important; }
 
-    .stApp {
-        background: var(--bg-primary);
-    }
+    .stApp { background: var(--bg-app) !important; }
 
-    /* All text */
+    /* ===== TEXT ===== */
     .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
     .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown strong,
-    [data-testid="column"] p, .element-container .stMarkdown p {
-        color: var(--text-primary) !important;
-    }
+    [data-testid="column"] p, .element-container .stMarkdown p { color: var(--text-primary) !important; }
+    .stMarkdown strong { color: var(--text-bright) !important; }
+    h1, h2, h3, h4 { color: var(--text-bright) !important; font-weight: 700; }
 
-    /* Form labels */
+    /* ===== INPUTS ===== */
     .stTextInput label, .stSelectbox label, .stSlider label,
-    .stCheckbox label, .stTextArea label, .stNumberInput label,
-    .stFileUploader label {
-        color: var(--text-secondary) !important;
-        font-weight: 500;
-        font-size: 13px;
-        text-transform: none;
-        letter-spacing: 0;
+    .stCheckbox label, .stTextArea label, .stNumberInput label, .stFileUploader label {
+        color: var(--text-secondary) !important; font-size: 13px !important; font-weight: 500 !important;
     }
-
-    /* Input fields */
-    .stTextInput > div > div > input,
-    .stTextArea textarea,
-    .stNumberInput > div > div > input {
-        background: var(--bg-secondary) !important;
-        border: 1.5px solid var(--border-color) !important;
-        border-radius: 8px !important;
-        color: var(--text-primary) !important;
-        padding: 12px 16px !important;
-        font-size: 14px !important;
-        transition: all 0.2s ease !important;
+    .stTextInput > div > div > input, .stTextArea textarea, .stNumberInput > div > div > input {
+        background: var(--bg-input) !important; border: 1.5px solid var(--border) !important;
+        border-radius: var(--radius-sm) !important; color: var(--text-bright) !important;
+        padding: 11px 14px !important; font-size: 14px !important; transition: border-color 0.2s ease !important;
     }
-
-    .stTextInput > div > div > input:focus,
-    .stTextArea textarea:focus {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px var(--primary-100) !important;
+    .stTextInput > div > div > input:focus, .stTextArea textarea:focus {
+        border-color: var(--border-focus) !important;
+        box-shadow: 0 0 0 3px rgba(112,230,237,0.12) !important;
     }
+    .stTextInput > div > div > input::placeholder { color: var(--text-muted) !important; }
 
-    .stTextInput > div > div > input::placeholder {
-        color: var(--text-muted) !important;
+    /* ===== SELECT ===== */
+    .stSelectbox > div > div, [data-baseweb="select"] {
+        background: var(--bg-input) !important; border: 1.5px solid var(--border) !important;
+        border-radius: var(--radius-sm) !important;
     }
-
-    /* Select box */
-    .stSelectbox > div > div,
-    [data-baseweb="select"] {
-        background: var(--bg-secondary) !important;
-        border: 1.5px solid var(--border-color) !important;
-        border-radius: 8px !important;
+    .stSelectbox [data-baseweb="select"] *, .stSelectbox > div > div > div { color: var(--text-primary) !important; }
+    [data-baseweb="popover"], [data-baseweb="menu"], [data-baseweb="listbox"], [role="listbox"] {
+        background: #1a1a1a !important; border: 1px solid var(--border-light) !important;
+        border-radius: var(--radius-sm) !important; box-shadow: var(--shadow-lg) !important;
     }
-
-    .stSelectbox [data-baseweb="select"] *,
-    .stSelectbox > div > div > div {
-        color: var(--text-primary) !important;
-    }
-
-    /* Dropdown menus */
-    [data-baseweb="popover"], [data-baseweb="menu"],
-    [data-baseweb="listbox"], [role="listbox"] {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border-color) !important;
-        border-radius: 10px !important;
-        box-shadow: var(--shadow-xl) !important;
-        overflow: hidden;
-    }
-
     [data-baseweb="popover"] li, [data-baseweb="menu"] li,
     [data-baseweb="listbox"] li, [role="option"] {
-        background: var(--bg-card) !important;
-        color: var(--text-primary) !important;
-        padding: 10px 16px !important;
+        background: transparent !important; color: var(--text-primary) !important;
+        padding: 10px 16px !important; transition: background 0.15s ease !important;
+    }
+    [data-baseweb="popover"] li:hover, [role="option"]:hover {
+        background: rgba(112,230,237,0.08) !important; color: var(--primary) !important;
     }
 
-    [data-baseweb="popover"] li:hover, [data-baseweb="menu"] li:hover,
-    [data-baseweb="listbox"] li:hover, [role="option"]:hover {
-        background: var(--primary-50) !important;
-    }
+    /* ===== SLIDER / CHECKBOX ===== */
+    .stSlider label, .stSlider p, [data-testid="stSlider"] * { color: var(--text-primary) !important; }
+    .stSlider [data-baseweb="slider"] div[role="slider"] { background: var(--primary) !important; }
+    .stCheckbox > label > span { color: var(--text-primary) !important; }
 
-    /* Slider */
-    .stSlider label, .stSlider p, [data-testid="stSlider"] * {
-        color: var(--text-primary) !important;
-    }
-
-    .stSlider [data-baseweb="slider"] div[role="slider"] {
-        background: var(--primary) !important;
-    }
-
-    /* Checkbox */
-    .stCheckbox > label > span {
-        color: var(--text-primary) !important;
-    }
-
-    /* Sidebar - White Theme with dark text */
+    /* ===== SIDEBAR ===== */
     [data-testid="stSidebar"] {
         background: var(--bg-sidebar) !important;
-        border-right: 1px solid #e5e5e5;
+        border-right: 1px solid var(--border) !important;
     }
-
-    [data-testid="stSidebar"] > div:first-child {
-        padding-top: 1.5rem;
-        background: transparent !important;
-    }
-
-    [data-testid="stSidebar"] * {
-        color: #171717 !important;
-    }
-
-    [data-testid="stSidebar"] .stMarkdown h3 {
-        color: #171717 !important;
-        font-weight: 600;
-        font-size: 16px;
-    }
-
-    [data-testid="stSidebar"] .stMarkdown p {
-        color: #525252 !important;
-    }
-
-    [data-testid="stSidebar"] hr {
-        border-color: #e5e5e5 !important;
-    }
-
+    [data-testid="stSidebar"] > div:first-child { padding-top: 1rem; background: transparent !important; }
+    [data-testid="stSidebar"] * { color: var(--text-primary) !important; }
+    [data-testid="stSidebar"] .stMarkdown p { color: var(--text-secondary) !important; }
+    [data-testid="stSidebar"] hr { border-color: var(--border) !important; }
     [data-testid="stSidebar"] .stButton > button {
-        background: transparent !important;
-        border: none !important;
-        border-radius: 8px !important;
-        color: #525252 !important;
-        padding: 12px 16px !important;
-        text-align: left !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
-        transition: all 0.2s ease !important;
-        margin: 4px 8px !important;
-        width: calc(100% - 16px) !important;
+        background: transparent !important; border: none !important;
+        border-radius: var(--radius-sm) !important; color: #888888 !important;
+        padding: 10px 14px !important; text-align: left !important;
+        font-weight: 500 !important; font-size: 14px !important;
+        transition: background 0.2s ease, color 0.2s ease !important; width: 100% !important;
+        box-shadow: none !important;
     }
-
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: #f97316 !important;
-        color: #ffffff !important;
+        background: #1a1a1a !important; color: #ededed !important;
+        transform: none !important; border: none !important;
     }
 
-    /* Tabs */
+    /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
-        background: var(--bg-secondary);
-        border-radius: 10px;
-        padding: 4px;
-        gap: 4px;
-        border: 1px solid var(--border-color);
+        background: var(--bg-card); border-radius: var(--radius-sm);
+        padding: 4px; gap: 2px; border: 1px solid var(--border);
     }
-
     .stTabs [data-baseweb="tab"] {
-        background: transparent;
-        color: var(--text-secondary) !important;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: 500;
+        background: transparent; color: var(--text-secondary) !important;
+        border-radius: 6px; padding: 8px 18px; font-weight: 500; font-size: 13px;
     }
-
     .stTabs [aria-selected="true"] {
-        background: var(--primary) !important;
-        color: #ffffff !important;
+        background: var(--primary) !important; color: #0d0d0d !important; font-weight: 600;
     }
 
-    /* Main Buttons */
+    /* ===== BUTTONS ===== */
     .stButton > button {
-        background: var(--primary) !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 12px 24px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        transition: all 0.2s ease !important;
-        letter-spacing: 0.3px !important;
-        box-shadow: var(--shadow-sm) !important;
+        background: #1e1e1e !important; color: #d0d0d0 !important;
+        border: 1px solid #3a3a3a !important; border-radius: var(--radius-sm) !important;
+        padding: 9px 20px !important; font-weight: 500 !important; font-size: 14px !important;
+        transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+        letter-spacing: 0.1px !important; box-shadow: none !important;
     }
-
     .stButton > button:hover {
-        background: var(--primary-dark) !important;
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-md) !important;
+        background: #2a2a2a !important; border-color: #555 !important;
+        color: #ffffff !important; transform: none !important; box-shadow: none !important;
+    }
+    .stButton > button:active { opacity: 0.75 !important; }
+    /* Primary button — white, solid, high contrast */
+    .stButton > button[kind="primary"] {
+        background: #ffffff !important; color: #0a0a0a !important;
+        border: 1px solid #ffffff !important; font-weight: 600 !important;
+    }
+    .stButton > button[kind="primary"]:hover {
+        background: #e8e8e8 !important; border-color: #e8e8e8 !important;
+        color: #0a0a0a !important;
     }
 
-    .stButton > button:active {
-        transform: translateY(0);
-    }
-
-    /* Cards */
-    .stat-card, .role-card, .profile-card, .attendance-row {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-        transition: all 0.2s ease;
-    }
-
+    /* ===== STAT CARDS ===== */
     .stat-card {
-        padding: 24px;
-        text-align: center;
+        background: var(--bg-card) !important; border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 24px; text-align: center;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-
-    .stat-card:hover {
-        box-shadow: var(--shadow-md);
-    }
-
+    .stat-card:hover { border-color: var(--border-light); box-shadow: var(--shadow-md); }
     .stat-value {
-        font-size: 36px;
-        font-weight: 700;
-        color: var(--text-primary) !important;
-        line-height: 1.2;
+        font-size: 36px; font-weight: 800; color: var(--text-bright) !important;
+        line-height: 1.1; letter-spacing: -1px; font-family: 'JetBrains Mono', monospace !important;
     }
-
     .stat-label {
-        font-size: 11px;
-        color: var(--text-muted) !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-top: 8px;
-        font-weight: 500;
+        font-size: 11px; color: var(--text-muted) !important; text-transform: uppercase;
+        letter-spacing: 1.2px; margin-top: 8px; font-weight: 500;
     }
 
+    /* ===== ROLE CARDS ===== */
     .role-card {
-        padding: 40px 28px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); padding: 40px 28px; text-align: center;
+        transition: all 0.3s ease; cursor: pointer;
     }
-
     .role-card:hover {
-        transform: translateY(-6px);
-        box-shadow: var(--shadow-xl);
-        border-color: var(--primary);
+        border-color: var(--primary); box-shadow: 0 8px 32px rgba(112,230,237,0.12);
+        transform: translateY(-4px);
     }
-
     .role-icon {
-        width: 72px;
-        height: 72px;
-        border-radius: 16px;
-        background: var(--primary);
-        margin: 0 auto 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        font-weight: 700;
-        color: #ffffff;
-        box-shadow: var(--shadow-md);
+        width: 64px; height: 64px; border-radius: 16px;
+        background: var(--primary); margin: 0 auto 20px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 26px; font-weight: 800; color: #0d0d0d !important;
     }
+    .role-title { font-size: 18px; font-weight: 700; color: var(--text-bright) !important; margin-bottom: 8px; }
+    .role-desc { font-size: 13px; color: var(--text-secondary) !important; line-height: 1.5; }
 
-    .role-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text-primary) !important;
-        margin-bottom: 10px;
-        letter-spacing: 0.3px;
-    }
-
-    .role-desc {
-        font-size: 13px;
-        color: var(--text-secondary) !important;
-        line-height: 1.6;
-    }
-
-    /* Header bar */
+    /* ===== HEADER BAR ===== */
     .header-bar {
-        background: var(--primary);
-        padding: 24px 28px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-        box-shadow: var(--shadow-md);
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-left: 3px solid var(--primary);
+        padding: 20px 24px; border-radius: var(--radius); margin-bottom: 24px;
     }
+    .header-bar h2 { color: var(--text-bright) !important; margin: 0; font-size: 20px; font-weight: 700; }
+    .header-bar p { color: var(--text-secondary) !important; margin: 4px 0 0; font-size: 13px; }
 
-    .header-bar h2 {
-        color: #ffffff !important;
-        margin: 0;
-        font-weight: 600;
-    }
-
-    .header-bar p {
-        color: rgba(255,255,255,0.9) !important;
-        margin: 6px 0 0 0;
-    }
-
-    /* Section title */
+    /* ===== SECTION TITLE ===== */
     .section-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-primary) !important;
-        margin: 24px 0 16px 0;
-        padding: 14px 18px;
-        background: var(--primary-50);
-        border-radius: 8px;
-        border-left: 4px solid var(--primary);
+        font-size: 12px; font-weight: 600; color: var(--text-secondary) !important;
+        margin: 24px 0 12px; padding: 10px 16px;
+        background: var(--bg-card); border-radius: var(--radius-sm);
+        border-left: 2px solid var(--primary);
+        text-transform: uppercase; letter-spacing: 1px;
     }
 
-    /* Attendance row */
+    /* ===== ATTENDANCE ROWS ===== */
     .attendance-row {
-        padding: 16px 20px;
-        margin: 8px 0;
-        transition: all 0.2s ease;
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius-sm); padding: 14px 18px; margin: 6px 0;
+        transition: background 0.15s ease, border-color 0.15s ease;
     }
-
-    .attendance-row:hover {
-        background: var(--hover-bg) !important;
-    }
-
-    .attendance-row strong { color: var(--text-primary) !important; }
+    .attendance-row:hover { background: var(--bg-card-hover) !important; border-color: var(--border-light); }
+    .attendance-row strong { color: var(--text-bright) !important; }
     .attendance-row span { color: var(--text-secondary) !important; }
 
-    /* Status badges */
+    /* ===== STATUS BADGES ===== */
     .status-present {
-        background: var(--success-bg);
-        color: var(--success) !important;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
+        background: var(--success-bg); color: var(--success) !important;
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        border: 1px solid rgba(74,222,128,0.2); display: inline-block;
     }
-
     .status-absent {
-        background: var(--error-bg);
-        color: var(--error) !important;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
+        background: var(--error-bg); color: var(--error) !important;
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        border: 1px solid rgba(248,113,113,0.2); display: inline-block;
     }
 
-    /* Profile card */
+    /* ===== PROFILE CARD ===== */
     .profile-card {
-        padding: 40px;
-        text-align: center;
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 40px; text-align: center;
+    }
+    .profile-card h3 { color: var(--text-bright) !important; font-weight: 700; }
+    .profile-card p { color: var(--text-secondary) !important; }
+    .profile-avatar {
+        width: 88px; height: 88px; border-radius: 20px;
+        background: var(--primary); margin: 0 auto 20px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; font-weight: 800; color: #0d0d0d !important;
     }
 
-    .profile-card h3 {
-        color: var(--text-primary) !important;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
+    /* ===== MISC ===== */
+    .stProgress > div > div { background: var(--primary) !important; border-radius: 4px; }
 
-    .profile-card p {
+    .stFileUploader > div, [data-testid="stFileUploaderDropzone"] {
+        background: var(--bg-card) !important; border: 1.5px dashed var(--border-light) !important;
+        border-radius: var(--radius) !important;
+    }
+    .stFileUploader > div:hover, [data-testid="stFileUploaderDropzone"]:hover {
+        border-color: var(--primary) !important;
+    }
+    .stFileUploader span, .stFileUploader p, .stFileUploader small,
+    [data-testid="stFileUploaderDropzone"] span, [data-testid="stFileUploaderDropzone"] p {
         color: var(--text-secondary) !important;
     }
-
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 20px;
-        background: var(--primary);
-        margin: 0 auto 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 36px;
-        font-weight: 700;
-        color: #ffffff !important;
-        box-shadow: var(--shadow-md);
+    .stFileUploader button, [data-testid="stFileUploaderDropzone"] button {
+        background: var(--primary) !important; color: #0d0d0d !important;
     }
 
-    /* Progress bar */
-    .stProgress > div > div {
-        background: var(--primary) !important;
-        border-radius: 4px;
-    }
-
-    /* File uploader */
-    .stFileUploader > div,
-    .stFileUploader section,
-    .stFileUploader [data-testid="stFileUploader"],
-    .stFileUploader [data-testid="stFileUploaderDropzone"],
-    [data-testid="stFileUploaderDropzone"] {
-        background: #ffffff !important;
-        border: 2px dashed #e5e5e5 !important;
-        border-radius: 12px !important;
-        transition: all 0.2s ease;
-    }
-
-    .stFileUploader > div:hover,
-    [data-testid="stFileUploaderDropzone"]:hover {
-        border-color: var(--primary) !important;
-        background: #fff7ed !important;
-    }
-
-    /* File uploader text */
-    .stFileUploader span,
-    .stFileUploader p,
-    .stFileUploader small,
-    [data-testid="stFileUploaderDropzone"] span,
-    [data-testid="stFileUploaderDropzone"] p {
-        color: #525252 !important;
-    }
-
-    /* File uploader button */
-    .stFileUploader button,
-    [data-testid="stFileUploaderDropzone"] button {
-        background: var(--primary) !important;
-        color: #ffffff !important;
-    }
-
-    /* Alerts */
-    .stAlert {
-        border-radius: 10px !important;
-        border: none !important;
-    }
-
-    /* Info box styling */
-    .stInfo {
-        background: var(--primary-50) !important;
-        color: var(--primary-dark) !important;
-    }
-
-    /* Success message */
-    .stSuccess {
-        background: var(--success-bg) !important;
-    }
-
-    /* Warning message */
-    .stWarning {
-        background: var(--warning-bg) !important;
-    }
-
-    /* Error message */
-    .stError {
-        background: var(--error-bg) !important;
-    }
-
-    /* Divider */
-    hr {
-        border-color: var(--border-color) !important;
-        margin: 20px 0 !important;
-    }
-
-    /* Form styling */
+    .stAlert { border-radius: var(--radius-sm) !important; }
     [data-testid="stForm"] {
-        background: var(--bg-card);
-        padding: 24px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
+        background: var(--bg-card); padding: 24px; border-radius: var(--radius);
+        border: 1px solid var(--border);
     }
 
-    /* Login card styling */
-    .login-card {
-        background: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 40px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        max-width: 420px;
-        margin: 0 auto;
-    }
+    hr { border-color: var(--border) !important; margin: 20px 0 !important; }
 
-    .login-header {
-        text-align: center;
-        margin-bottom: 32px;
-    }
-
-    .login-header h1 {
-        font-size: 24px;
-        font-weight: 600;
-        color: #171717;
-        margin-bottom: 8px;
-    }
-
-    .login-header p {
-        font-size: 14px;
-        color: #525252;
-    }
-
-    .google-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        width: 100%;
-        padding: 12px 24px;
-        background: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        color: #171717;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-bottom: 24px;
-    }
-
-    .google-btn:hover {
-        background: #f5f5f5;
-        border-color: #d4d4d4;
-    }
-
-    /* Forgot password link style - looks like plain text */
-    .forgot-pw-link button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #f97316 !important;
-        font-size: 13px !important;
-        font-weight: 500 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        text-decoration: none !important;
-    }
-
-    .forgot-pw-link button:hover {
-        background: transparent !important;
-        color: #ea580c !important;
-        text-decoration: underline !important;
-        transform: none !important;
-        box-shadow: none !important;
-    }
-
-    .forgot-pw-link {
-        text-align: right;
-        margin: -8px 0 16px 0;
-    }
-
-    .divider {
-        display: flex;
-        align-items: center;
-        margin: 24px 0;
-    }
-
-    .divider::before, .divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #e5e5e5;
-    }
-
-    .divider span {
-        padding: 0 16px;
-        font-size: 12px;
-        color: #a3a3a3;
-        text-transform: uppercase;
-    }
-
-    /* Quick Attendance Card */
+    /* ===== QUICK ATTENDANCE CARD ===== */
     .quick-attendance-card {
-        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-        border-radius: 16px;
-        padding: 32px;
-        text-align: center;
-        color: white;
-        margin-bottom: 32px;
-        box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+        background: var(--bg-card); border: 1px solid var(--border);
+        border-top: 2px solid var(--primary);
+        border-radius: var(--radius-lg); padding: 36px; text-align: center; margin-bottom: 28px;
     }
+    .quick-attendance-card h2 { color: var(--text-bright) !important; font-size: 22px; margin-bottom: 8px; }
+    .quick-attendance-card p { color: var(--text-secondary) !important; margin-bottom: 20px; font-size: 14px; }
 
-    .quick-attendance-card h2 {
-        color: white !important;
-        font-size: 24px;
-        margin-bottom: 8px;
+    /* ===== FORGOT PW ===== */
+    .forgot-pw-link button {
+        background: transparent !important; border: none !important; box-shadow: none !important;
+        color: #666666 !important; font-size: 13px !important; padding: 2px 0 !important;
+        text-decoration: underline !important; text-underline-offset: 3px !important;
+        min-height: unset !important;
     }
+    .forgot-pw-link button:hover { color: #aaaaaa !important; border: none !important; background: transparent !important; transform: none !important; box-shadow: none !important; }
+    .forgot-pw-link { text-align: right; margin: -6px 0 14px; }
 
-    .quick-attendance-card p {
-        color: rgba(255,255,255,0.9) !important;
-        margin-bottom: 20px;
+    /* ===== INFO BOX ===== */
+    .info-box {
+        background: rgba(112,230,237,0.06); border: 1px solid rgba(112,230,237,0.15);
+        border-radius: var(--radius-sm); padding: 14px 18px;
     }
+    .info-box p { color: var(--primary) !important; font-size: 13px; margin: 0; }
 
-    /* Hide Streamlit branding and fix header */
+    /* ===== HEADER / STREAMLIT CHROME ===== */
     #MainMenu, footer, div[data-testid="stSidebarNav"] { display: none !important; }
+    header[data-testid="stHeader"] { display: none !important; }
+    .stDeployButton, [data-testid="stDecoration"], [data-testid="stStatusWidget"] { display: none !important; }
 
-    /* Fix top header/toolbar bar */
-    header[data-testid="stHeader"] {
-        background: #ffffff !important;
-        border-bottom: 1px solid #e5e5e5;
-    }
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-app); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #333; }
 
-    /* Streamlit toolbar buttons */
-    header[data-testid="stHeader"] button,
-    header[data-testid="stHeader"] [data-testid="stToolbar"] {
-        background: transparent !important;
-        color: #525252 !important;
+    /* ===== SPLIT LOGIN PANEL ===== */
+    .split-image-panel {
+        border-radius: var(--radius-lg); overflow: hidden; min-height: 560px;
+        background-size: cover; background-position: center;
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 36px;
+        position: relative;
     }
+    .split-image-panel::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(13,13,13,0.1) 0%, rgba(13,13,13,0.85) 100%);
+        border-radius: var(--radius-lg);
+    }
+    .split-image-panel .panel-content { position: relative; z-index: 1; }
 
-    /* Decoration bar at top */
-    .stDeployButton, [data-testid="stDecoration"] {
-        background: #ffffff !important;
+    /* ===== HOME HERO ===== */
+    .hero-image-card {
+        border-radius: var(--radius-lg); overflow: hidden; min-height: 380px;
+        background-size: cover; background-position: center;
+        display: flex; flex-direction: column; justify-content: flex-end;
+        padding: 40px; position: relative; margin-bottom: 32px;
     }
+    .hero-image-card::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(13,13,13,0.0) 30%, rgba(13,13,13,0.92) 100%);
+    }
+    .hero-image-card .hero-content { position: relative; z-index: 1; }
 
-    /* Top bar container */
-    [data-testid="stToolbar"] {
-        background: #ffffff !important;
+    /* ===== BRAND BADGE ===== */
+    .brand-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--border-light); background: var(--bg-card);
+        padding: 6px 14px; border-radius: 100px; margin-bottom: 16px;
     }
-
-    /* Status widget */
-    [data-testid="stStatusWidget"] {
-        background: #ffffff !important;
-    }
-
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--bg-primary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--border-color);
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--text-muted);
-    }
+    .brand-badge span { font-size: 12px; color: var(--primary) !important; font-weight: 600; letter-spacing: 0.5px; }
+    .brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
 </style>
 """
 
@@ -717,21 +404,24 @@ def init_session_state():
 
 
 def show_role_selection():
-    """Show role selection page - Quick Attendance at top, Login portals below"""
+    """Show role selection page"""
+    # Hero header
     st.markdown("""
-    <div style="text-align:center;padding:40px 0 20px;">
-        <h1 style="font-size:42px;margin-bottom:8px;font-weight:700;letter-spacing:-1px;color:#171717;">AttendEase</h1>
-        <p style="font-size:14px;color:#525252;letter-spacing:1px;">Smart Face Recognition Attendance System</p>
+    <div style="text-align:center;padding:64px 0 32px;">
+        <div style="width:56px;height:56px;border-radius:14px;background:#70E6ED;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:24px;">📸</div>
+        <h1 style="font-size:36px;font-weight:800;color:#ffffff;margin:0 0 10px;letter-spacing:-0.5px;">AttendEase</h1>
+        <p style="font-size:16px;color:#666;margin:0;">Smart Face Recognition Attendance System</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Quick Attendance - Featured at top
+    # Quick Attendance Card
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
         <div class="quick-attendance-card">
+            <div style="font-size:32px;margin-bottom:14px;">⚡</div>
             <h2>Quick Attendance</h2>
-            <p>Scan your face to mark attendance instantly - no login required</p>
+            <p>Scan your face to mark attendance instantly — no login required</p>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Scan Face Now", key="quick_attendance_btn", use_container_width=True, type="primary"):
@@ -740,22 +430,22 @@ def show_role_selection():
 
     # Divider
     st.markdown("""
-    <div style="display:flex;align-items:center;margin:40px 0;">
-        <div style="flex:1;height:1px;background:#e5e5e5;"></div>
-        <span style="padding:0 20px;font-size:12px;color:#a3a3a3;text-transform:uppercase;letter-spacing:2px;">or sign in to your account</span>
-        <div style="flex:1;height:1px;background:#e5e5e5;"></div>
+    <div style="display:flex;align-items:center;margin:40px auto;max-width:600px;">
+        <div style="flex:1;height:1px;background:#222;"></div>
+        <span style="padding:0 20px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:2px;">or sign in as</span>
+        <div style="flex:1;height:1px;background:#222;"></div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Login Portals - Side by side with equal spacing
-    col1, col_a, col_b, col4 = st.columns([1, 1, 1, 1])
+    # Login Portals
+    col1, col_a, col_b, col4 = st.columns([0.5, 1, 1, 0.5])
 
     with col_a:
         st.markdown("""
         <div class="role-card" style="min-height:220px;">
-            <div class="role-icon">S</div>
+            <div class="role-icon">🎓</div>
             <div class="role-title">Student Portal</div>
-            <div class="role-desc">Mark attendance and view your records</div>
+            <div class="role-desc">Mark attendance, view records, and manage your profile</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Student Login", key="student_btn", use_container_width=True):
@@ -765,10 +455,10 @@ def show_role_selection():
 
     with col_b:
         st.markdown("""
-        <div class="role-card" style="min-height:220px;">
-            <div class="role-icon">A</div>
+        <div class="role-card" style="min-height:220px;border-color:#333;">
+            <div class="role-icon" style="background:#CAF291;">🛡️</div>
             <div class="role-title">Admin Portal</div>
-            <div class="role-desc">Manage students and view reports</div>
+            <div class="role-desc">Manage students, train models, and generate reports</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Admin Login", key="admin_btn", use_container_width=True):
@@ -776,66 +466,62 @@ def show_role_selection():
             st.session_state.page = 'admin_login'
             st.rerun()
 
+    st.markdown("""
+    <div style="text-align:center;padding:40px 0 16px;">
+        <p style="font-size:12px;color:#3a3a3a;letter-spacing:1px;">Powered by Face Recognition AI</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 def show_student_login():
-    """Show student login page - Conventional style with Google option"""
-    col1, col2, col3 = st.columns([1, 1.2, 1])
+    """Show student login page — split screen layout"""
+    col_img, col_form, col_pad = st.columns([1.4, 1, 0.2], gap="large")
 
-    with col2:
-        # Login Card Header
+    with col_img:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0 20px;">
-            <div class="role-icon" style="margin:0 auto 16px;width:56px;height:56px;font-size:22px;">S</div>
-            <h1 style="font-size:24px;margin-bottom:6px;font-weight:600;color:#171717;">Student Login</h1>
-            <p style="font-size:14px;color:#525252;">Sign in to access your dashboard</p>
+        <div class="split-image-panel" style="background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&q=80');">
+            <div class="panel-content">
+                <div class="brand-badge" style="margin-bottom:18px;">
+                    <div class="brand-dot"></div>
+                    <span>Student Portal</span>
+                </div>
+                <h2 style="font-size:26px;font-weight:800;color:#fff;margin:0 0 10px;line-height:1.3;">Track your attendance<br>effortlessly</h2>
+                <p style="font-size:13px;color:rgba(255,255,255,0.55);margin:0;line-height:1.6;">View records, mark attendance, and manage your academic profile.</p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Google Sign In Button (Visual only - placeholder)
+    with col_form:
+        st.markdown("<div style='padding:52px 0 24px;'>", unsafe_allow_html=True)
         st.markdown("""
-        <div style="background:#ffffff;border:1px solid #e5e5e5;border-radius:8px;padding:12px 24px;display:flex;align-items:center;justify-content:center;gap:12px;cursor:pointer;margin-bottom:20px;transition:all 0.2s;">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            <span style="font-size:14px;font-weight:500;color:#171717;">Continue with Google</span>
-        </div>
+        <h1 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 4px;letter-spacing:-0.3px;">Sign in</h1>
+        <p style="font-size:13px;color:#555;margin:0 0 24px;">Student account</p>
         """, unsafe_allow_html=True)
 
-        # Divider
-        st.markdown("""
-        <div style="display:flex;align-items:center;margin:20px 0;">
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
-            <span style="padding:0 16px;font-size:12px;color:#a3a3a3;">or continue with email</span>
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Google Sign In Button
-        if st.button("Continue with Google", key="student_google_btn", use_container_width=True):
+        if st.button("↗  Continue with Google", key="student_google_btn"):
             st.session_state.google_login_role = 'student'
             st.session_state.page = 'google_login'
             st.rerun()
 
-        # Divider
         st.markdown("""
-        <div style="display:flex;align-items:center;margin:20px 0;">
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
-            <span style="padding:0 16px;font-size:12px;color:#a3a3a3;">or continue with email</span>
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
+        <div style="display:flex;align-items:center;margin:18px 0 16px;">
+            <div style="flex:1;height:1px;background:#1e1e1e;"></div>
+            <span style="padding:0 12px;font-size:11px;color:#3a3a3a;letter-spacing:1px;">OR</span>
+            <div style="flex:1;height:1px;background:#1e1e1e;"></div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Login Form
-        username = st.text_input("Email or Username", placeholder="Enter your email or username", key="student_username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password", key="student_password")
+        username = st.text_input("Email or Username", placeholder="you@example.com", key="student_username")
+        password = st.text_input("Password", type="password", placeholder="••••••••", key="student_password")
 
-        # Forgot Password Link (plain text style)
         st.markdown('<div class="forgot-pw-link">', unsafe_allow_html=True)
-        if st.button("Forgot Password?", key="student_forgot_pw"):
+        if st.button("Forgot password?", key="student_forgot_pw"):
             st.session_state.forgot_password_role = 'student'
             st.session_state.page = 'forgot_password'
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button("Sign In", use_container_width=True, key="student_login_btn", type="primary"):
+        if st.button("Sign In", key="student_login_btn", type="primary", use_container_width=True):
             if username and password:
                 success, role, student_id = UserOperations.authenticate(username, password)
                 if success and role == 'student':
@@ -848,26 +534,27 @@ def show_student_login():
                 elif success and role == 'admin':
                     st.error("This is an admin account. Please use Admin Portal.")
                 else:
-                    st.error("Invalid username or password")
+                    st.error("Invalid credentials")
             else:
-                st.warning("Please enter username and password")
+                st.warning("Please fill in all fields")
 
-        # Register Link
         st.markdown("""
-        <p style="text-align:center;margin-top:24px;font-size:14px;color:#525252;">
-            Don't have an account?
-        </p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
+            <span style="font-size:13px;color:#444;">No account?</span>
+        </div>
         """, unsafe_allow_html=True)
 
-        if st.button("Create Account", use_container_width=True, key="student_register_btn"):
-            st.session_state.page = 'student_register'
-            st.rerun()
+        col_a, col_b = st.columns(2)
+        with col_a:
+            if st.button("Create account", key="student_register_btn", use_container_width=True):
+                st.session_state.page = 'student_register'
+                st.rerun()
+        with col_b:
+            if st.button("← Back", key="student_back_btn", use_container_width=True):
+                st.session_state.page = 'role_select'
+                st.rerun()
 
-        st.markdown("<div style='height:20px;'></div>", unsafe_allow_html=True)
-
-        if st.button("Back to Home", use_container_width=True, key="student_back_btn"):
-            st.session_state.page = 'role_select'
-            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def show_student_register():
@@ -876,10 +563,10 @@ def show_student_register():
 
     with col2:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0;">
-            <div class="role-icon" style="margin:0 auto 20px;">R</div>
-            <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Student Registration</h1>
-            <p style="font-size:14px;opacity:0.6;">Create your account</p>
+        <div style="text-align:center;padding:40px 0 24px;">
+            <div class="role-icon" style="margin:0 auto 24px;font-size:26px;">👤</div>
+            <h1 style="font-size:28px;margin-bottom:10px;font-weight:700;color:#f0f0f0;letter-spacing:-0.5px;">Student Registration</h1>
+            <p style="font-size:14px;color:#666;">Create your account to get started</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -944,47 +631,54 @@ def show_student_register():
 
 
 def show_admin_login():
-    """Show admin login page - Conventional style with Google option"""
-    col1, col2, col3 = st.columns([1, 1.2, 1])
+    """Show admin login page — split screen layout"""
+    col_img, col_form, col_pad = st.columns([1.4, 1, 0.2], gap="large")
 
-    with col2:
-        # Login Card Header
+    with col_img:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0 20px;">
-            <div class="role-icon" style="margin:0 auto 16px;width:56px;height:56px;font-size:22px;">A</div>
-            <h1 style="font-size:24px;margin-bottom:6px;font-weight:600;color:#171717;">Admin Login</h1>
-            <p style="font-size:14px;color:#525252;">Sign in to manage the system</p>
+        <div class="split-image-panel" style="background-image:url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80');">
+            <div class="panel-content">
+                <div class="brand-badge" style="margin-bottom:18px;border-color:rgba(202,242,145,0.25);">
+                    <div class="brand-dot" style="background:#CAF291;"></div>
+                    <span style="color:#CAF291 !important;">Admin Portal</span>
+                </div>
+                <h2 style="font-size:26px;font-weight:800;color:#fff;margin:0 0 10px;line-height:1.3;">Manage your institution<br>with precision</h2>
+                <p style="font-size:13px;color:rgba(255,255,255,0.55);margin:0;line-height:1.6;">Register students, train models, and oversee attendance reports.</p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Google Sign In Button
-        if st.button("Continue with Google", key="admin_google_btn", use_container_width=True):
+    with col_form:
+        st.markdown("<div style='padding:52px 0 24px;'>", unsafe_allow_html=True)
+        st.markdown("""
+        <h1 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 4px;letter-spacing:-0.3px;">Sign in</h1>
+        <p style="font-size:13px;color:#555;margin:0 0 24px;">Admin account</p>
+        """, unsafe_allow_html=True)
+
+        if st.button("↗  Continue with Google", key="admin_google_btn"):
             st.session_state.google_login_role = 'admin'
             st.session_state.page = 'google_login'
             st.rerun()
 
-        # Divider
         st.markdown("""
-        <div style="display:flex;align-items:center;margin:20px 0;">
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
-            <span style="padding:0 16px;font-size:12px;color:#a3a3a3;">or continue with email</span>
-            <div style="flex:1;height:1px;background:#e5e5e5;"></div>
+        <div style="display:flex;align-items:center;margin:18px 0 16px;">
+            <div style="flex:1;height:1px;background:#1e1e1e;"></div>
+            <span style="padding:0 12px;font-size:11px;color:#3a3a3a;letter-spacing:1px;">OR</span>
+            <div style="flex:1;height:1px;background:#1e1e1e;"></div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Login Form
-        username = st.text_input("Email or Username", placeholder="Enter your email or username", key="admin_username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password", key="admin_password")
+        username = st.text_input("Email or Username", placeholder="admin", key="admin_username")
+        password = st.text_input("Password", type="password", placeholder="••••••••", key="admin_password")
 
-        # Forgot Password Link (plain text style)
         st.markdown('<div class="forgot-pw-link">', unsafe_allow_html=True)
-        if st.button("Forgot Password?", key="admin_forgot_pw"):
+        if st.button("Forgot password?", key="admin_forgot_pw"):
             st.session_state.forgot_password_role = 'admin'
             st.session_state.page = 'forgot_password'
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button("Sign In", use_container_width=True, key="admin_login_btn", type="primary"):
+        if st.button("Sign In", key="admin_login_btn", type="primary", use_container_width=True):
             if username and password:
                 success, role, student_id = UserOperations.authenticate(username, password)
                 if success and role == 'admin':
@@ -997,33 +691,29 @@ def show_admin_login():
                 elif success and role == 'student':
                     st.error("This is a student account. Please use Student Portal.")
                 else:
-                    st.error("Invalid username or password")
+                    st.error("Invalid credentials")
             else:
-                st.warning("Please enter username and password")
+                st.warning("Please fill in all fields")
 
-        # Default credentials info
         st.markdown("""
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;margin-top:16px;">
-            <p style="font-size:13px;color:#9a3412;margin:0;"><strong>Default credentials:</strong> admin / admin123</p>
+        <div style="margin-top:14px;padding:10px 14px;background:#111;border:1px solid #222;border-radius:8px;">
+            <p style="font-size:12px;color:#444;margin:0;">Default: <span style="color:#666;">admin / admin123</span></p>
         </div>
         """, unsafe_allow_html=True)
 
-        # Register Link
-        st.markdown("""
-        <p style="text-align:center;margin-top:24px;font-size:14px;color:#525252;">
-            Need an admin account?
-        </p>
-        """, unsafe_allow_html=True)
+        st.markdown('<p style="font-size:13px;color:#444;margin-top:20px;">Need an account?</p>', unsafe_allow_html=True)
 
-        if st.button("Register New Admin", use_container_width=True, key="admin_register_nav_btn"):
-            st.session_state.page = 'admin_register_self'
-            st.rerun()
+        col_a, col_b = st.columns(2)
+        with col_a:
+            if st.button("Register Admin", key="admin_register_nav_btn", use_container_width=True):
+                st.session_state.page = 'admin_register_self'
+                st.rerun()
+        with col_b:
+            if st.button("← Back", key="admin_back_btn", use_container_width=True):
+                st.session_state.page = 'role_select'
+                st.rerun()
 
-        st.markdown("<div style='height:20px;'></div>", unsafe_allow_html=True)
-
-        if st.button("Back to Home", use_container_width=True, key="admin_back_btn"):
-            st.session_state.page = 'role_select'
-            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def show_admin_register_self():
@@ -1032,10 +722,10 @@ def show_admin_register_self():
 
     with col2:
         st.markdown("""
-        <div style="text-align:center;padding:30px 0;">
-            <div class="role-icon" style="margin:0 auto 20px;">R</div>
-            <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Admin Registration</h1>
-            <p style="font-size:14px;opacity:0.6;">Create new admin account</p>
+        <div style="text-align:center;padding:40px 0 24px;">
+            <div class="role-icon" style="margin:0 auto 24px;background:#CAF291;font-size:26px;">🛡️</div>
+            <h1 style="font-size:28px;margin-bottom:10px;font-weight:700;color:#f0f0f0;letter-spacing:-0.5px;">Admin Registration</h1>
+            <p style="font-size:14px;color:#666;">Create new admin account</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1093,18 +783,18 @@ def show_forgot_password():
 
         # Header
         st.markdown(f"""
-        <div style="text-align:center;padding:30px 0 20px;">
-            <div class="role-icon" style="margin:0 auto 16px;width:56px;height:56px;font-size:22px;">{role_icon}</div>
-            <h1 style="font-size:24px;margin-bottom:6px;font-weight:600;color:#171717;">Reset Password</h1>
-            <p style="font-size:14px;color:#525252;">{role_title} Account Recovery</p>
+        <div style="text-align:center;padding:40px 0 24px;">
+            <div class="role-icon" style="margin:0 auto 20px;font-size:26px;">🔒</div>
+            <h1 style="font-size:28px;margin-bottom:8px;font-weight:700;color:#f0f0f0;letter-spacing:-0.5px;">Reset Password</h1>
+            <p style="font-size:14px;color:#666;">{role_title} Account Recovery</p>
         </div>
         """, unsafe_allow_html=True)
 
         # Step 1: Enter email
         if st.session_state.reset_step == 1:
             st.markdown("""
-            <div style="background:#fff7ed;border-radius:8px;padding:16px;margin-bottom:20px;">
-                <p style="font-size:14px;color:#9a3412;margin:0;">Enter your registered email address. We'll send you a verification code.</p>
+            <div class="info-box" style="margin-bottom:20px;">
+                <p style="font-size:14px;color:#70E6ED !important;margin:0;">Enter your registered email address. We'll send you a verification code.</p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1142,8 +832,8 @@ def show_forgot_password():
         # Step 2: Enter verification code
         elif st.session_state.reset_step == 2:
             st.markdown(f"""
-            <div style="background:#fff7ed;border-radius:8px;padding:16px;margin-bottom:20px;">
-                <p style="font-size:14px;color:#9a3412;margin:0;">Enter the 6-digit code sent to <strong>{st.session_state.reset_email}</strong></p>
+            <div class="info-box" style="margin-bottom:20px;">
+                <p style="font-size:14px;color:#70E6ED !important;margin:0;">Enter the 6-digit code sent to <strong style="color:#70E6ED !important;">{st.session_state.reset_email}</strong></p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1178,8 +868,8 @@ def show_forgot_password():
         # Step 3: Set new password
         elif st.session_state.reset_step == 3:
             st.markdown("""
-            <div style="background:#dcfce7;border-radius:8px;padding:16px;margin-bottom:20px;">
-                <p style="font-size:14px;color:#166534;margin:0;">Code verified! Enter your new password below.</p>
+            <div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:16px;margin-bottom:20px;">
+                <p style="font-size:14px;color:#4ade80 !important;margin:0;">Code verified! Enter your new password below.</p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1236,42 +926,37 @@ def show_google_login():
 
         # Header
         st.markdown(f"""
-        <div style="text-align:center;padding:30px 0 20px;">
-            <div class="role-icon" style="margin:0 auto 16px;width:56px;height:56px;font-size:22px;background:#4285F4;">G</div>
-            <h1 style="font-size:24px;margin-bottom:6px;font-weight:600;color:#171717;">Google Sign In</h1>
-            <p style="font-size:14px;color:#525252;">{role_title} Account</p>
+        <div style="text-align:center;padding:40px 0 24px;">
+            <div class="role-icon" style="margin:0 auto 20px;background:linear-gradient(135deg,#4285F4,#34A853);font-size:26px;">G</div>
+            <h1 style="font-size:28px;margin-bottom:8px;font-weight:700;color:#f0f0f0;letter-spacing:-0.5px;">Google Sign In</h1>
+            <p style="font-size:14px;color:#666;">{role_title} Account</p>
         </div>
         """, unsafe_allow_html=True)
 
         # Info about Google OAuth setup
         st.markdown("""
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:24px;margin-bottom:24px;">
-            <h4 style="color:#9a3412;margin:0 0 12px 0;font-size:16px;">Google OAuth Configuration Required</h4>
-            <p style="font-size:14px;color:#9a3412;margin:0 0 16px 0;">
-                To enable Google Sign-In, you need to set up OAuth credentials in Google Cloud Console.
+        <div class="info-box" style="margin-bottom:24px;padding:24px;">
+            <h4 style="color:#70E6ED !important;margin:0 0 12px 0;font-size:16px;">Google OAuth Configuration Required</h4>
+            <p style="font-size:14px;color:#a0a0a0 !important;margin:0 0 16px 0;">
+                To enable Google Sign-In, set up OAuth credentials in Google Cloud Console.
             </p>
-            <div style="background:#ffffff;border-radius:8px;padding:16px;margin-bottom:16px;">
-                <p style="font-size:13px;color:#525252;margin:0 0 8px 0;font-weight:600;">Setup Steps:</p>
-                <ol style="font-size:13px;color:#525252;margin:0;padding-left:20px;">
+            <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:16px;border:1px solid rgba(255,255,255,0.06);">
+                <p style="font-size:13px;color:#a0a0a0 !important;margin:0 0 8px 0;font-weight:600;">Setup Steps:</p>
+                <ol style="font-size:13px;color:#a0a0a0 !important;margin:0;padding-left:20px;">
                     <li>Go to Google Cloud Console</li>
                     <li>Create OAuth 2.0 credentials</li>
-                    <li>Set environment variables:
-                        <ul>
-                            <li>GOOGLE_CLIENT_ID</li>
-                            <li>GOOGLE_CLIENT_SECRET</li>
-                        </ul>
-                    </li>
+                    <li>Set GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET env vars</li>
                 </ol>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Demo mode - simulate Google login
+        # Demo mode
         st.markdown("""
-        <div style="background:#f5f5f5;border-radius:12px;padding:24px;margin-bottom:20px;">
-            <h4 style="color:#171717;margin:0 0 12px 0;font-size:16px;">Demo Mode</h4>
-            <p style="font-size:14px;color:#525252;margin:0 0 16px 0;">
-                Enter your Google email to simulate sign-in. In production, this would redirect to Google.
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:24px;margin-bottom:20px;">
+            <h4 style="color:#f0f0f0 !important;margin:0 0 12px 0;font-size:16px;">Demo Mode</h4>
+            <p style="font-size:14px;color:#a0a0a0 !important;margin:0;">
+                Enter your Google email to simulate sign-in.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1315,29 +1000,37 @@ def show_google_login():
 
 def show_student_dashboard():
     """Show student dashboard"""
+
     student = StudentOperations.get_student(st.session_state.student_id)
     stats = AttendanceOperations.get_student_attendance_stats(st.session_state.student_id)
 
     # Sidebar
     with st.sidebar:
-        st.markdown(f"### {student.name if student else 'Student'}")
-        st.markdown(f"ID: {st.session_state.student_id}")
+        student_name = student.name if student else 'Student'
+        student_initial = student_name[0].upper()
+        st.markdown(f"""
+        <div style="padding:8px 4px 16px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#70E6ED,#4dd4db);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#0a0a0a;margin-bottom:10px;">{student_initial}</div>
+            <div style="font-size:15px;font-weight:700;color:#f0f0f0;">{student_name}</div>
+            <div style="font-size:11px;color:#444;font-family:'JetBrains Mono',monospace;margin-top:2px;">{st.session_state.student_id}</div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
 
-        if st.button("Dashboard", use_container_width=True):
+        if st.button("📊  Dashboard", use_container_width=True):
             st.session_state.page = 'student_dashboard'
             st.rerun()
-        if st.button("Mark Attendance", use_container_width=True):
+        if st.button("📷  Mark Attendance", use_container_width=True):
             st.session_state.page = 'mark_attendance'
             st.rerun()
-        if st.button("My Profile", use_container_width=True):
+        if st.button("👤  My Profile", use_container_width=True):
             st.session_state.page = 'profile'
             st.rerun()
-        if st.button("Attendance History", use_container_width=True):
+        if st.button("📅  Attendance History", use_container_width=True):
             st.session_state.page = 'history'
             st.rerun()
         st.markdown("---")
-        if st.button("Logout", use_container_width=True):
+        if st.button("🚪  Logout", use_container_width=True):
             for key in ['logged_in', 'user_role', 'student_id', 'username']:
                 st.session_state[key] = None if key != 'logged_in' else False
             st.session_state.page = 'role_select'
@@ -1347,7 +1040,7 @@ def show_student_dashboard():
     st.markdown(f"""
     <div class="header-bar">
         <h2 style="margin:0;">Welcome, {student.name if student else 'Student'}</h2>
-        <p style="margin:5px 0 0 0;opacity:0.8;">{datetime.now().strftime('%A, %B %d, %Y')}</p>
+        <p style="margin:5px 0 0 0;font-family:'JetBrains Mono',monospace;font-size:13px;">{datetime.now().strftime('%A, %B %d, %Y')}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1356,11 +1049,11 @@ def show_student_dashboard():
     with col1:
         st.markdown(f'<div class="stat-card"><div class="stat-value">{stats["total"]}</div><div class="stat-label">Total Classes</div></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#22c55e;">{stats["present"]}</div><div class="stat-label">Present</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#4ade80;">{stats["present"]}</div><div class="stat-label">Present</div></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#ef4444;">{stats["absent"]}</div><div class="stat-label">Absent</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#f87171;">{stats["absent"]}</div><div class="stat-label">Absent</div></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#f97316;">{stats["percentage"]}%</div><div class="stat-label">Attendance</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#70E6ED;">{stats["percentage"]}%</div><div class="stat-label">Attendance</div></div>', unsafe_allow_html=True)
 
     # Recent attendance
     st.markdown('<div class="section-title">Recent Attendance</div>', unsafe_allow_html=True)
@@ -1372,7 +1065,10 @@ def show_student_dashboard():
             time_str = record.time_in.strftime('%H:%M') if record.time_in else 'N/A'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{record.date.strftime('%B %d, %Y')}</strong><br><span style="font-size:12px;color:#64748b;">Time: {time_str}</span></div>
+                <div>
+                    <strong style="color:#f0f0f0;">{record.date.strftime('%B %d, %Y')}</strong><br>
+                    <span style="font-size:12px;color:#555;font-family:'JetBrains Mono',monospace;">{time_str}</span>
+                </div>
                 <span class="{status_class}">{record.status}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -1382,6 +1078,7 @@ def show_student_dashboard():
 
 def show_mark_attendance():
     """Show mark attendance page"""
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Mark Attendance</h2></div>', unsafe_allow_html=True)
 
     with st.sidebar:
@@ -1425,10 +1122,11 @@ def show_mark_attendance():
 
     with col2:
         status = "Present" if already_marked else "Pending"
-        color = "#22c55e" if already_marked else "#f97316"
+        color = "#4ade80" if already_marked else "#70E6ED"
         st.markdown(f"""
         <div class="stat-card">
-            <div class="stat-value" style="color:{color};font-size:24px;">{status}</div>
+            <span class="material-symbols-outlined" style="font-size:36px;color:{color};margin-bottom:12px;display:block;">{'check_circle' if already_marked else 'schedule'}</span>
+            <div class="stat-value" style="color:{color};font-size:28px;">{status}</div>
             <div class="stat-label">Today's Status</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1436,10 +1134,11 @@ def show_mark_attendance():
         # Show face registration status
         if not already_marked:
             face_status = "Registered" if face_registered else "Not Registered"
-            face_color = "#22c55e" if face_registered else "#ef4444"
+            face_color = "#4ade80" if face_registered else "#f87171"
             st.markdown(f"""
-            <div class="stat-card" style="margin-top:15px;">
-                <div class="stat-value" style="color:{face_color};font-size:18px;">{face_status}</div>
+            <div class="stat-card" style="margin-top:16px;">
+                <span class="material-symbols-outlined" style="font-size:28px;color:{face_color};margin-bottom:10px;display:block;">{'face' if face_registered else 'no_accounts'}</span>
+                <div class="stat-value" style="color:{face_color};font-size:20px;">{face_status}</div>
                 <div class="stat-label">Face Status</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1559,18 +1258,22 @@ def show_student_profile():
             st.session_state.page = 'edit_profile'
             st.rerun()
 
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">My Profile</h2></div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 2])
 
     with col1:
         initial = student.name[0].upper() if student else 'S'
+        face_status_color = "#4ade80" if (student and student.face_encoding) else "#f87171"
+        face_status_text = "Face Registered" if (student and student.face_encoding) else "No Face Data"
         st.markdown(f"""
         <div class="profile-card">
             <div class="profile-avatar">{initial}</div>
-            <h3>{student.name if student else 'Student'}</h3>
-            <p style="color:#64748b;">{student.student_id if student else ''}</p>
-            <p style="color:#f97316;">{student.department if student else ''}</p>
+            <h3 style="font-size:20px;margin-bottom:6px;">{student.name if student else 'Student'}</h3>
+            <p style="color:#888;font-size:13px;margin:0 0 4px;font-family:'JetBrains Mono',monospace;">{student.student_id if student else ''}</p>
+            <p style="color:#70E6ED;font-size:13px;margin:0 0 16px;">{student.department if student else ''}</p>
+            <span style="background:rgba({('74,222,128' if (student and student.face_encoding) else '248,113,113')},0.12);color:{face_status_color};padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba({('74,222,128' if (student and student.face_encoding) else '248,113,113')},0.2);">{face_status_text}</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1579,14 +1282,35 @@ def show_student_profile():
         if student:
             col_a, col_b = st.columns(2)
             with col_a:
-                st.write(f"**Email:** {student.email or 'N/A'}")
-                st.write(f"**Phone:** {student.phone or 'N/A'}")
-                st.write(f"**Department:** {student.department or 'N/A'}")
+                st.markdown(f"""
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Email</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.email or '—'}</div>
+                </div>
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Phone</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.phone or '—'}</div>
+                </div>
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Department</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.department or '—'}</div>
+                </div>
+                """, unsafe_allow_html=True)
             with col_b:
-                st.write(f"**Batch:** {student.batch or 'N/A'}")
-                st.write(f"**Semester:** {student.semester or 'N/A'}")
-                st.write(f"**Section:** {student.section or 'N/A'}")
-            st.write(f"**Face Registered:** {'Yes' if student.face_encoding else 'No'}")
+                st.markdown(f"""
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Batch</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.batch or '—'}</div>
+                </div>
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Semester</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.semester or '—'}</div>
+                </div>
+                <div class="attendance-row" style="padding:12px 16px;margin:6px 0;">
+                    <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Section</div>
+                    <div style="font-size:14px;color:#f0f0f0;">{student.section or '—'}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
 
 def show_edit_profile():
@@ -1597,6 +1321,7 @@ def show_edit_profile():
         if st.button("Back to Profile", use_container_width=True):
             st.session_state.page = 'profile'
             st.rerun()
+
 
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Edit Profile</h2></div>', unsafe_allow_html=True)
 
@@ -1683,6 +1408,7 @@ def show_attendance_history():
             st.session_state.page = 'student_dashboard'
             st.rerun()
 
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Attendance History</h2></div>', unsafe_allow_html=True)
 
     records = AttendanceOperations.get_student_attendance(st.session_state.student_id)
@@ -1691,10 +1417,13 @@ def show_attendance_history():
         for record in records:
             status_class = "status-present" if record.status == 'Present' else "status-absent"
             time_in = record.time_in.strftime('%H:%M:%S') if record.time_in else 'N/A'
-            time_out = record.time_out.strftime('%H:%M:%S') if record.time_out else '-'
+            time_out = record.time_out.strftime('%H:%M:%S') if record.time_out else '—'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{record.date.strftime('%A, %B %d, %Y')}</strong><br><span style="font-size:12px;color:#64748b;">In: {time_in} | Out: {time_out}</span></div>
+                <div>
+                    <strong style="color:#f0f0f0;">{record.date.strftime('%A, %B %d, %Y')}</strong><br>
+                    <span style="font-size:12px;color:#555;font-family:'JetBrains Mono',monospace;">In: {time_in} &nbsp;|&nbsp; Out: {time_out}</span>
+                </div>
                 <span class="{status_class}">{record.status}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -1704,28 +1433,34 @@ def show_attendance_history():
 
 def show_admin_dashboard():
     """Show admin dashboard"""
+
     with st.sidebar:
-        st.markdown("### Admin Panel")
+        st.markdown("""
+        <div style="padding:8px 4px 20px;">
+            <div style="font-size:20px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#70E6ED,#CAF291);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">AttendEase</div>
+            <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:2px;font-family:'JetBrains Mono',monospace;margin-top:2px;">Admin Panel</div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
-        if st.button("Dashboard", use_container_width=True):
+        if st.button("📊  Dashboard", use_container_width=True):
             st.session_state.page = 'admin_dashboard'
-        if st.button("All Students", use_container_width=True):
+        if st.button("👥  All Students", use_container_width=True):
             st.session_state.page = 'admin_students'
             st.rerun()
-        if st.button("Register Student", use_container_width=True):
+        if st.button("➕  Register Student", use_container_width=True):
             st.session_state.page = 'admin_register'
             st.rerun()
-        if st.button("Add Face Images", use_container_width=True):
+        if st.button("📷  Add Face Images", use_container_width=True):
             st.session_state.page = 'admin_capture'
             st.rerun()
-        if st.button("Train Model", use_container_width=True):
+        if st.button("🧠  Train Model", use_container_width=True):
             st.session_state.page = 'admin_train'
             st.rerun()
-        if st.button("Mark Attendance", use_container_width=True):
+        if st.button("✅  Mark Attendance", use_container_width=True):
             st.session_state.page = 'admin_mark'
             st.rerun()
         st.markdown("---")
-        if st.button("Logout", use_container_width=True):
+        if st.button("🚪  Logout", use_container_width=True):
             st.session_state.logged_in = False
             st.session_state.page = 'role_select'
             st.rerun()
@@ -1733,7 +1468,7 @@ def show_admin_dashboard():
     st.markdown(f"""
     <div class="header-bar">
         <h2 style="margin:0;">Admin Dashboard</h2>
-        <p style="margin:5px 0 0 0;opacity:0.8;">{datetime.now().strftime('%A, %B %d, %Y')}</p>
+        <p style="margin:5px 0 0 0;font-family:'JetBrains Mono',monospace;font-size:13px;">{datetime.now().strftime('%A, %B %d, %Y')}</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1746,11 +1481,11 @@ def show_admin_dashboard():
     with col1:
         st.markdown(f'<div class="stat-card"><div class="stat-value">{total_students}</div><div class="stat-label">Total Students</div></div>', unsafe_allow_html=True)
     with col2:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#22c55e;">{today_attendance}</div><div class="stat-label">Present Today</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#4ade80;">{today_attendance}</div><div class="stat-label">Present Today</div></div>', unsafe_allow_html=True)
     with col3:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#ef4444;">{absent}</div><div class="stat-label">Absent Today</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#f87171;">{absent}</div><div class="stat-label">Absent Today</div></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#f97316;">{rate}%</div><div class="stat-label">Attendance Rate</div></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-card"><div class="stat-value" style="color:#70E6ED;">{rate}%</div><div class="stat-label">Attendance Rate</div></div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Today\'s Attendance</div>', unsafe_allow_html=True)
     records = AttendanceOperations.get_daily_attendance()
@@ -1761,8 +1496,14 @@ def show_admin_dashboard():
             time_str = record.time_in.strftime('%H:%M:%S') if record.time_in else 'N/A'
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{student.name if student else record.student_id}</strong><br><span style="font-size:12px;color:#64748b;">{record.student_id}</span></div>
-                <div><span style="font-size:12px;color:#64748b;">{time_str}</span> <span class="status-present" style="margin-left:10px;">{record.status}</span></div>
+                <div>
+                    <strong style="color:#f0f0f0;">{student.name if student else record.student_id}</strong><br>
+                    <span style="font-size:12px;color:#666;font-family:'JetBrains Mono',monospace;">{record.student_id}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="font-size:12px;color:#555;font-family:'JetBrains Mono',monospace;">{time_str}</span>
+                    <span class="status-present">{record.status}</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
     else:
@@ -1775,6 +1516,7 @@ def show_admin_students():
         if st.button("Back", use_container_width=True):
             st.session_state.page = 'admin_dashboard'
             st.rerun()
+
 
     st.markdown('<div class="header-bar"><h2 style="margin:0;">All Students</h2></div>', unsafe_allow_html=True)
 
@@ -1793,8 +1535,15 @@ def show_admin_students():
         with col1:
             st.markdown(f"""
             <div class="attendance-row" style="display:flex;justify-content:space-between;align-items:center;">
-                <div><strong>{student.name}</strong><br><span style="font-size:12px;color:#64748b;">{student.student_id} | {student.department or 'N/A'}</span></div>
-                <div><span style="font-size:12px;color:#f97316;font-weight:600;">{stats['percentage']}%</span> <span class="{face_status}" style="margin-left:10px;">{face_text}</span></div>
+                <div>
+                    <strong style="color:#f0f0f0;font-size:15px;">{student.name}</strong><br>
+                    <span style="font-size:12px;color:#666;font-family:'JetBrains Mono',monospace;">{student.student_id}</span>
+                    <span style="font-size:12px;color:#555;margin-left:8px;">| {student.department or 'N/A'}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="font-size:14px;color:#70E6ED;font-weight:700;font-family:'JetBrains Mono',monospace;">{stats['percentage']}%</span>
+                    <span class="{face_status}">{face_text}</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
         with col2:
@@ -1811,6 +1560,7 @@ def show_admin_edit_student():
             st.session_state.page = 'admin_students'
             st.rerun()
 
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Edit Student</h2></div>', unsafe_allow_html=True)
 
     student_id = st.session_state.get('edit_student_id')
@@ -1825,10 +1575,21 @@ def show_admin_edit_student():
 
     # Student info card
     st.markdown(f"""
-    <div class="stat-card" style="text-align:left;margin-bottom:20px;">
-        <strong style="color:#1e293b;">Student ID:</strong> <span style="color:#64748b;">{student.student_id}</span><br>
-        <strong style="color:#171717;">Face Status:</strong> <span style="color:{'#22c55e' if student.face_encoding else '#ef4444'};">{'Registered' if student.face_encoding else 'Not Registered'}</span><br>
-        <strong style="color:#1e293b;">Images:</strong> <span style="color:#64748b;">{student.image_count or 0}</span>
+    <div class="stat-card" style="text-align:left;margin-bottom:20px;padding:20px 24px;">
+        <div style="display:flex;gap:32px;flex-wrap:wrap;">
+            <div>
+                <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Student ID</div>
+                <div style="font-size:14px;color:#f0f0f0;font-family:'JetBrains Mono',monospace;">{student.student_id}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Face Status</div>
+                <div style="font-size:14px;color:{'#4ade80' if student.face_encoding else '#f87171'};">{'Registered' if student.face_encoding else 'Not Registered'}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Images</div>
+                <div style="font-size:14px;color:#70E6ED;font-family:'JetBrains Mono',monospace;">{student.image_count or 0}</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1940,6 +1701,7 @@ def show_admin_capture():
             st.session_state.page = 'admin_dashboard'
             st.rerun()
 
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Add Face Images</h2></div>', unsafe_allow_html=True)
 
     students = StudentOperations.get_all_students()
@@ -1960,9 +1722,23 @@ def show_admin_capture():
 
         # Student info card
         st.markdown(f"""
-        <div class="stat-card" style="text-align:left;margin:15px 0;">
-            <strong style="color:#1e293b;">{student.name}</strong><br>
-            <span style="color:#64748b;font-size:14px;">Current images: {existing} | Min required: 5</span>
+        <div class="stat-card" style="text-align:left;margin:15px 0;padding:18px 24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <div style="font-size:16px;font-weight:700;color:#f0f0f0;">{student.name}</div>
+                    <div style="font-size:12px;color:#666;font-family:'JetBrains Mono',monospace;margin-top:4px;">{selected_id}</div>
+                </div>
+                <div style="display:flex;gap:20px;">
+                    <div style="text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:#70E6ED;font-family:'JetBrains Mono',monospace;">{existing}</div>
+                        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">Current</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:22px;font-weight:700;color:#CAF291;font-family:'JetBrains Mono',monospace;">5</div>
+                        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;">Min. Required</div>
+                    </div>
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -2083,6 +1859,7 @@ def show_admin_train():
         if st.button("Back", use_container_width=True):
             st.session_state.page = 'admin_dashboard'
             st.rerun()
+
 
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Train Model</h2></div>', unsafe_allow_html=True)
 
@@ -2288,10 +2065,10 @@ def process_uploaded_photos(student_id: str, student_name: str, uploaded_files, 
 def show_quick_attendance():
     """Quick attendance marking without login"""
     st.markdown("""
-    <div style="text-align:center;padding:40px 0 30px;">
-        <div class="role-icon" style="margin:0 auto 20px;">Q</div>
-        <h1 style="font-size:28px;margin-bottom:10px;font-weight:600;">Quick Attendance</h1>
-        <p style="font-size:14px;opacity:0.6;">Face scan to mark your attendance</p>
+    <div style="text-align:center;padding:48px 0 24px;">
+        <div style="width:52px;height:52px;border-radius:13px;background:#70E6ED;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:22px;">⚡</div>
+        <h1 style="font-size:32px;font-weight:800;color:#fff;margin:0 0 8px;">Quick Attendance</h1>
+        <p style="font-size:14px;color:#666;margin:0;">Face scan to mark your attendance — no login required</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -2421,6 +2198,7 @@ def show_admin_mark():
             st.session_state.page = 'admin_dashboard'
             st.rerun()
 
+
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Mark Attendance</h2></div>', unsafe_allow_html=True)
 
     model_path = TRAINED_MODELS_DIR / "face_encodings.pkl"
@@ -2514,6 +2292,7 @@ def show_admin_register():
         if st.button("Back", use_container_width=True):
             st.session_state.page = 'admin_dashboard'
             st.rerun()
+
 
     st.markdown('<div class="header-bar"><h2 style="margin:0;">Register Student</h2></div>', unsafe_allow_html=True)
 
