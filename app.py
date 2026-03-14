@@ -90,11 +90,21 @@ THEME_CSS = """
     .stApp { background: var(--bg-app) !important; }
 
     /* ===== TEXT ===== */
-    .stApp, .stApp p, .stApp span, .stApp label, .stApp div,
+    .stApp p, .stApp label, .stApp li,
     .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown strong,
     [data-testid="column"] p, .element-container .stMarkdown p { color: var(--text-primary) !important; }
     .stMarkdown strong { color: var(--text-bright) !important; }
     h1, h2, h3, h4 { color: var(--text-bright) !important; font-weight: 700; }
+
+    /* ===== BUTTON TEXT — override broad color rules ===== */
+    .stButton > button, .stButton > button p, .stButton > button span,
+    .stButton > button div, .stButton > button * {
+        color: #d0d0d0 !important;
+    }
+    .stButton > button[kind="primary"], .stButton > button[kind="primary"] *,
+    .stButton > button[kind="primary"] p, .stButton > button[kind="primary"] span {
+        color: #0a0a0a !important;
+    }
 
     /* ===== INPUTS ===== */
     .stTextInput label, .stSelectbox label, .stSlider label,
