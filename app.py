@@ -7,9 +7,14 @@ Premium Dark Glassmorphism UI with Unsplash Backgrounds
 import streamlit as st
 from datetime import datetime, date, timedelta
 from pathlib import Path
+import os
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
+
+# Cloud mode hides server-camera flows (cv2.VideoCapture has no device on Streamlit Cloud)
+# and falls back to st.camera_input snapshots / photo uploads from the visitor's browser.
+IS_CLOUD = os.getenv("CLOUD_MODE", "").lower() in ("1", "true", "yes")
 
 from database.models import init_database
 init_database()
@@ -1199,9 +1204,12 @@ def show_mark_attendance():
             st.error("Your face is not registered in the system.")
             st.warning("Please contact admin to capture your face images first.")
         else:
-            st.info("Click the button below to open camera and scan your face")
-            if st.button("Open Camera & Scan", type="primary", use_container_width=True):
-                run_student_recognition()
+            if IS_CLOUD:
+                cloud_student_recognition()
+            else:
+                st.info("Click the button below to open camera and scan your face")
+                if st.button("Open Camera & Scan", type="primary", use_container_width=True):
+                    run_student_recognition()
 
     with col2:
         status = "Present" if already_marked else "Pending"
@@ -1225,6 +1233,129 @@ def show_mark_attendance():
                 <div class="stat-label">Face Status</div>
             </div>
             """, unsafe_allow_html=True)
+
+
+def _load_known_faces():
+    """Load the trained face encodings. Returns (encodings, ids, names) or (None, None, None)."""
+    import pickle
+    import numpy as np
+    model_path = TRAINED_MODELS_DIR / "face_encodings.pkl"
+    if not model_path.exists():
+        return None, None, None
+    with open(model_path, 'rb') as f:
+        data = pickle.load(f)
+    return [np.array(e) for e in data['encodings']], data['ids'], data['names']
+
+
+def _recognize_snapshot(snapshot, threshold: float = 0.5):
+    """Run recognition on a single st.camera_input snapshot.
+    Returns (matched_id, matched_name, confidence) or (None, None, 0.0)."""
+    import numpy as np
+    import face_recognition
+    from PIL import Image
+
+    known_encodings, known_ids, known_names = _load_known_faces()
+    if not known_encodings:
+        return None, None, 0.0
+
+    img = np.array(Image.open(snapshot).convert('RGB'))
+    face_locations = face_recognition.face_locations(img, model='hog')
+    if not face_locations:
+        return None, None, 0.0
+
+    encodings = face_recognition.face_encodings(img, face_locations)
+    if not encodings:
+        return None, None, 0.0
+
+    distances = face_recognition.face_distance(known_encodings, encodings[0])
+    if len(distances) == 0:
+        return None, None, 0.0
+
+    min_distance = float(np.min(distances))
+    best_idx = int(np.argmin(distances))
+    if min_distance < threshold:
+        return known_ids[best_idx], known_names[best_idx], 1.0 - min_distance
+    return None, None, 0.0
+
+
+def cloud_student_recognition():
+    """Cloud version: snapshot via st.camera_input instead of opencv VideoCapture."""
+    st.info("Take a photo to mark your attendance")
+    snapshot = st.camera_input("Scan your face", key="student_scan_cam")
+    if snapshot is None:
+        return
+
+    with st.spinner("Recognizing..."):
+        matched_id, matched_name, confidence = _recognize_snapshot(snapshot)
+
+    if matched_id is None:
+        st.error("No face recognized. Make sure your face is well-lit and centered, then try again.")
+        return
+
+    if matched_id != st.session_state.student_id:
+        st.error(f"Face matched as {matched_name}, but you're logged in as a different student. Attendance not marked.")
+        return
+
+    success, msg = AttendanceOperations.mark_attendance(
+        student_id=matched_id, confidence_score=confidence, status='Present'
+    )
+    if success:
+        st.success(f"Attendance marked! Welcome, {matched_name} (confidence: {confidence:.0%})")
+    else:
+        st.warning(msg)
+
+
+def cloud_quick_attendance():
+    """Cloud version of quick attendance — single-snapshot recognition."""
+    snapshot = st.camera_input("Take a photo to mark attendance", key="quick_scan_cam")
+    if snapshot is None:
+        return
+
+    with st.spinner("Recognizing..."):
+        matched_id, matched_name, confidence = _recognize_snapshot(snapshot)
+
+    if matched_id is None:
+        st.error("Face not recognized. Please ensure you're registered, then try again.")
+        return
+
+    student = StudentOperations.get_student(matched_id)
+    if not student:
+        st.error("Recognized face is not linked to a student record.")
+        return
+
+    if AttendanceOperations.check_attendance_exists(matched_id):
+        st.warning(f"Attendance already marked for {matched_name} today.")
+        return
+
+    success, msg = AttendanceOperations.mark_attendance(matched_id, confidence, 'Present')
+    if success:
+        st.success(f"Attendance marked for {matched_name} (confidence: {confidence:.0%})")
+    else:
+        st.error(f"Failed to mark attendance: {msg}")
+
+
+def cloud_admin_recognition():
+    """Cloud version of admin attendance marking — one snapshot per student."""
+    snapshot = st.camera_input("Take a photo of the student's face", key="admin_scan_cam")
+    if snapshot is None:
+        return
+
+    with st.spinner("Recognizing..."):
+        matched_id, matched_name, confidence = _recognize_snapshot(snapshot)
+
+    if matched_id is None:
+        st.error("No face recognized in the photo.")
+        return
+
+    if AttendanceOperations.check_attendance_exists(matched_id):
+        st.info(f"{matched_name} ({matched_id}) — already marked today.")
+        return
+
+    success, msg = AttendanceOperations.mark_attendance(matched_id, confidence, 'Present')
+    if success:
+        st.success(f"Marked: {matched_name} ({matched_id}) — confidence {confidence:.0%}")
+    else:
+        st.error(f"Failed to mark: {msg}")
 
 
 def run_student_recognition():
@@ -1825,17 +1956,23 @@ def show_admin_capture():
         </div>
         """, unsafe_allow_html=True)
 
-        # Tabs for different methods
-        tab1, tab2 = st.tabs(["Camera Capture", "Upload Photos"])
+        # Tabs for different methods (camera tab is local-only — hidden on cloud deploys)
+        if IS_CLOUD:
+            tabs = st.tabs(["Upload Photos"])
+            tab2 = tabs[0]
+            tab1 = None
+        else:
+            tab1, tab2 = st.tabs(["Camera Capture", "Upload Photos"])
 
-        with tab1:
-            st.markdown("**Capture faces using camera**")
-            st.markdown("<span style='color:#666;font-size:13px;'>Move your head slowly while capturing for better accuracy</span>", unsafe_allow_html=True)
+        if tab1 is not None:
+            with tab1:
+                st.markdown("**Capture faces using camera**")
+                st.markdown("<span style='color:#666;font-size:13px;'>Move your head slowly while capturing for better accuracy</span>", unsafe_allow_html=True)
 
-            num_images = st.slider("Images to capture", 10, 100, 50)
+                num_images = st.slider("Images to capture", 10, 100, 50)
 
-            if st.button("Start Camera Capture", type="primary", use_container_width=True):
-                capture_faces(selected_id, num_images)
+                if st.button("Start Camera Capture", type="primary", use_container_width=True):
+                    capture_faces(selected_id, num_images)
 
         with tab2:
             st.markdown("**Upload face photos**")
@@ -2165,8 +2302,11 @@ def show_quick_attendance():
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("Start Face Scan", type="primary", use_container_width=True):
-            run_quick_attendance()
+        if IS_CLOUD:
+            cloud_quick_attendance()
+        else:
+            if st.button("Start Face Scan", type="primary", use_container_width=True):
+                run_quick_attendance()
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Back to Home", use_container_width=True):
@@ -2289,8 +2429,11 @@ def show_admin_mark():
         st.error("Train model first")
         return
 
-    if st.button("Start Recognition", type="primary"):
-        run_admin_recognition()
+    if IS_CLOUD:
+        cloud_admin_recognition()
+    else:
+        if st.button("Start Recognition", type="primary"):
+            run_admin_recognition()
 
 
 def run_admin_recognition():

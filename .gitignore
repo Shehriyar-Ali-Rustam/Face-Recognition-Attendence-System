@@ -26,3 +26,12 @@ Thumbs.db
 dataset/
 *.pkl
 *.log
+logs/
+exports/
+
+# Duplicate / legacy copy of project (kept locally, not deployed)
+Face-Recognition-Attendence-System/
+design-reference/
+
+# Streamlit
+.streamlit/secrets.toml
